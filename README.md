@@ -2,14 +2,14 @@
 
 A collection of personal projects and experiments.
 
-## Geting Started
+## Getting Started
 
-Clone the repo and expolre the folders.
+Clone the repo and explore the folders.
 
 ```bash
 git clone https://github.com/jaysagent777-dev/projects_01.git
 ```
 
-## Contribuing
+## Contributing
 
-Pull requests are welcom. For major changes, please open an issue first.
+Pull requests are welcome. For major changes, please open an issue first.
