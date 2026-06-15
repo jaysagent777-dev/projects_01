@@ -270,13 +270,88 @@ DEMO_STORIES = [
 ]
 
 def run(topics: str = "world news, technology, climate, politics, science, business") -> None:
-    print(f"\n🌍  NewsAgent starting (DEMO MODE — no API key needed)...\n{'─'*50}")
+    if not ANTHROPIC_API_KEY:
+        print(f"\n🌍  NewsAgent starting (DEMO MODE — no API key needed)...\n{'─'*50}")
+        stories = DEMO_STORIES
+        print(f"\n🎨  Rendering {len(stories)} slides...")
+        paths = save_slides(stories)
+        print(f"\n📁  Slides saved to: {OUTPUT_DIR}")
+        print("\n✅  Done!")
+        return
 
-    stories = DEMO_STORIES
-    print(f"\n🎨  Rendering {len(stories)} slides...")
-    paths = save_slides(stories)
-    print(f"\n📁  Slides saved to: {OUTPUT_DIR}")
-    print("\n✅  Done!")
+    client   = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    messages = [{"role": "user", "content": f"Find today's top news and create 3 slide images. Topics to cover: {topics}"}]
+
+    print(f"\n🌍  NewsAgent starting...\n{'─'*50}")
+
+    while True:
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=4096,
+            thinking={"type": "adaptive"},
+            system=SYSTEM,
+            tools=TOOLS,
+            messages=messages,
+        )
+
+        messages.append({"role": "assistant", "content": response.content})
+
+        for block in response.content:
+            if block.type == "text" and block.text.strip():
+                print(block.text)
+
+        if response.stop_reason == "end_turn":
+            print("\n✅  Done!")
+            break
+
+        if response.stop_reason == "tool_use":
+            results = []
+            for block in response.content:
+                if block.type != "tool_use":
+                    continue
+
+                if block.name == "web_search":
+                    # Claude handles web_search server-side — shouldn't appear here
+                    result = json.dumps({"error": "web_search is server-side"})
+
+                elif block.name == "publish_news_slides":
+                    stories = block.input["stories"]
+                    caption = block.input["caption"]
+                    print(f"\n🎨  Rendering {len(stories)} slides...")
+
+                    paths = save_slides(stories)
+                    print(f"\n📁  Slides saved to: {OUTPUT_DIR}")
+
+                    # Try Instagram if credentials exist
+                    ig_result = {"success": False, "error": "skipped"}
+                    if IMGBB_API_KEY and INSTAGRAM_TOKEN and INSTAGRAM_ACCOUNT_ID:
+                        print("☁️   Uploading to imgbb...")
+                        urls = [upload_to_imgbb(p) for p in paths]
+                        print("📲  Posting to Instagram...")
+                        ig_result = post_to_instagram(urls, caption)
+                        if ig_result["success"]:
+                            print(f"🎉  Posted! ID: {ig_result['post_id']}")
+                        else:
+                            print(f"⚠️   Instagram: {ig_result['error']}")
+                    else:
+                        print("ℹ️   No Instagram credentials — slides saved locally only.")
+
+                    result = json.dumps({"slides_saved": len(paths),
+                                        "output_dir": str(OUTPUT_DIR),
+                                        "instagram": ig_result})
+                else:
+                    result = json.dumps({"error": f"unknown tool {block.name}"})
+
+                results.append({"type": "tool_result", "tool_use_id": block.id, "content": result})
+
+            messages.append({"role": "user", "content": results})
+            continue
+
+        if response.stop_reason == "pause_turn":
+            continue
+
+        print(f"Stopped: {response.stop_reason}")
+        break
 
 
 if __name__ == "__main__":
