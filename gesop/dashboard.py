@@ -19,8 +19,23 @@ IMAGES_DIR.mkdir(exist_ok=True)
 
 app = Flask(__name__)
 
-visitor_log = deque(maxlen=500)
+VISITORS_FILE = Path("data/visitors.json")
+VISITORS_FILE.parent.mkdir(exist_ok=True)
 _geo_cache = {}
+_log_lock = threading.Lock()
+
+def _load_visitors():
+    if VISITORS_FILE.exists():
+        try:
+            return json.loads(VISITORS_FILE.read_text())
+        except Exception:
+            pass
+    return []
+
+def _save_visitors(entries):
+    VISITORS_FILE.write_text(json.dumps(entries[-500:], indent=2))
+
+visitor_log = deque(_load_visitors(), maxlen=500)
 
 def _get_country(ip):
     if ip in _geo_cache:
@@ -32,25 +47,31 @@ def _get_country(ip):
         _geo_cache[ip] = f"{d.get('country','?')} {d.get('countryCode','')}"
     except Exception:
         _geo_cache[ip] = "?"
+    # update country in log and persist
+    with _log_lock:
+        for v in visitor_log:
+            if v["ip"] == ip and v["country"] == "…":
+                v["country"] = _geo_cache.get(ip, "?")
+        _save_visitors(list(visitor_log))
 
 @app.before_request
 def log_visitor():
     if request.path in ("/visitors", "/generate", "/health"):
         return
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
-    threading.Thread(target=_get_country, args=(ip,), daemon=True).start()
-    visitor_log.appendleft({
+    entry = {
         "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "ip": ip,
         "country": _geo_cache.get(ip, "…"),
         "path": request.path,
-    })
+    }
+    with _log_lock:
+        visitor_log.appendleft(entry)
+        _save_visitors(list(visitor_log))
+    threading.Thread(target=_get_country, args=(ip,), daemon=True).start()
 
 @app.route("/visitors")
 def visitors():
-    for v in visitor_log:
-        if v["country"] == "…":
-            v["country"] = _geo_cache.get(v["ip"], "…")
     resp = jsonify(list(visitor_log))
     resp.headers["Access-Control-Allow-Origin"] = "*"
     return resp
