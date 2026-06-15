@@ -313,7 +313,41 @@ def make_detail(title: str, summary: str, source: str, photo: Optional[Image.Ima
 
     return img
 
-# ── SLIDE 3: CTA ─────────────────────────────────────────────────────────────
+# ── SLIDE 3: DETAILS 2 ────────────────────────────────────────────────────────
+
+def make_detail2(title: str, details: str, source: str, photo: Optional[Image.Image]) -> Image.Image:
+    brand  = SOURCE_BRAND.get(source, DEFAULT_BRAND)
+    accent = brand["fg"]
+
+    img = Image.new("RGB", (W, H), (15, 15, 20))
+    PHOTO_BOT = 340
+
+    _photo_section(img, photo, 0, PHOTO_BOT)
+    _gradient_overlay(img, 0, PHOTO_BOT)
+
+    draw = ImageDraw.Draw(img)
+    pad  = 60
+
+    font_chip = _font(24, bold=True)
+    _pill(draw, pad, 40, "KEY FACTS", font_chip, bg=accent,
+          fg=(0, 0, 0) if sum(accent) > 500 else (255, 255, 255))
+
+    y = PHOTO_BOT + 30
+    draw.rectangle([pad, y, pad + 70, y + 5], fill=accent)
+    y += 28
+
+    clean = (details
+             .replace("<p>", " ").replace("</p>", " ")
+             .replace("<b>", "").replace("</b>", "")
+             .replace("  ", " ").strip())
+    font_b = _font(36)
+    for line in _wrap(draw, clean[:400], font_b, W - pad * 2)[:8]:
+        draw.text((pad, y), line, font=font_b, fill=(220, 220, 220))
+        y += 50
+
+    return img
+
+# ── SLIDE 4: CTA ─────────────────────────────────────────────────────────────
 
 def make_cta(source: str, photo: Optional[Image.Image]) -> Image.Image:
     brand  = SOURCE_BRAND.get(source, DEFAULT_BRAND)
@@ -362,6 +396,7 @@ def make_cta(source: str, photo: Optional[Image.Image]) -> Image.Image:
 def generate_slides(article: dict) -> list:
     title    = article.get("title", "")[:140]
     summary  = article.get("summary", "")
+    details  = article.get("details", summary)
     source   = article.get("source", "NEWS").upper()
     category = article.get("category", "WORLD NEWS")
     query       = article.get("photo_query") or (category + " " + title[:30])
@@ -374,8 +409,9 @@ def generate_slides(article: dict) -> list:
     print("   ✅  Photo loaded" if photo else "   ⚠️   Using dark fallback")
 
     slides = [
-        make_cover(title,  category, source, photo),
-        make_detail(title, summary,  source, photo),
+        make_cover(title,   category, source, photo),
+        make_detail(title,  summary,  source, photo),
+        make_detail2(title, details,  source, photo),
         make_cta(source, photo),
     ]
 
@@ -384,7 +420,7 @@ def generate_slides(article: dict) -> list:
         path = IMAGES_DIR / f"{hash_id}_slide_{i}.png"
         slide.save(path, "PNG")
         paths.append(path)
-        print(f"   🖼   Slide {i}/3 -> {path.name}")
+        print(f"   🖼   Slide {i}/{len(slides)} -> {path.name}")
 
     return paths
 

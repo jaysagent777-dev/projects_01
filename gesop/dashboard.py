@@ -145,7 +145,8 @@ URL: {real_link or ''}
 Return ONLY valid JSON (no markdown, no extra text):
 {{
   "title": "...",
-  "summary": "...",
+  "summary": "2-3 sentence overview of the story",
+  "details": "3-4 sentences with key facts, numbers, quotes or context that go deeper than the summary",
   "source": "...",
   "category": "...",
   "photo_query": "...",
