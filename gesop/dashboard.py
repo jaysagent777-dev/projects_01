@@ -5,8 +5,9 @@ Run: python3 dashboard.py  →  open http://localhost:5055
 """
 
 import base64, json, os, threading, subprocess
+from collections import deque
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, Response
 
@@ -17,6 +18,22 @@ IMAGES_DIR = Path("generated_images")
 IMAGES_DIR.mkdir(exist_ok=True)
 
 app = Flask(__name__)
+
+visitor_log = deque(maxlen=500)
+
+@app.before_request
+def log_visitor():
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    visitor_log.appendleft({
+        "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "ip": ip,
+        "method": request.method,
+        "path": request.path,
+    })
+
+@app.route("/visitors")
+def visitors():
+    return jsonify(list(visitor_log))
 
 # ── Claude CLI wrapper ────────────────────────────────────────────────────────
 
@@ -405,10 +422,29 @@ def index():
 
 <header>
   <div class="logo">gesop<span>.ai</span></div>
-  <div>
+  <div style="display:flex;align-items:center;gap:12px;">
     <span class="status-dot"></span>
+    <button onclick="toggleVisitors()" style="background:transparent;border:1px solid var(--bdr);color:var(--muted);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;">Visitors</button>
   </div>
 </header>
+
+<!-- Visitors panel -->
+<div id="visitors-panel" style="display:none;background:var(--bg2);border-bottom:1px solid var(--bdr);padding:20px 32px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <span style="font-weight:700;font-size:15px;">Visitor Log</span>
+    <button onclick="loadVisitors()" style="background:transparent;border:1px solid var(--bdr);color:var(--muted);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;">Refresh</button>
+  </div>
+  <input id="visitor-filter" oninput="filterVisitors()" placeholder="Filter by IP or endpoint..." style="width:100%;max-width:400px;background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);padding:8px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;outline:none;">
+  <table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead><tr style="color:var(--muted);">
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Time</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">IP</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Method</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Endpoint</th>
+    </tr></thead>
+    <tbody id="visitors-tbody"><tr><td colspan="4" style="color:var(--muted);padding:10px;">Loading...</td></tr></tbody>
+  </table>
+</div>
 
 <div class="container">
 
@@ -586,6 +622,32 @@ function copyCaption() {
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = 'Copy Caption', 2000);
   });
+}
+
+let visitorsData = [];
+function toggleVisitors() {
+  const panel = document.getElementById('visitors-panel');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  if (open) loadVisitors();
+}
+function loadVisitors() {
+  fetch('/visitors').then(r => r.json()).then(data => {
+    visitorsData = data;
+    filterVisitors();
+  });
+}
+function filterVisitors() {
+  const q = document.getElementById('visitor-filter').value.toLowerCase();
+  const rows = visitorsData.filter(v => !q || v.ip.includes(q) || v.path.toLowerCase().includes(q));
+  const tbody = document.getElementById('visitors-tbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);padding:10px;">No results.</td></tr>'; return; }
+  tbody.innerHTML = rows.map(v => `<tr>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);color:var(--muted);">${v.time}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);font-family:monospace;">${v.ip}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);color:var(--muted);">${v.method}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);">${v.path}</td>
+  </tr>`).join('');
 }
 </script>
 </body>
