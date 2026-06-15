@@ -111,12 +111,16 @@ IMPORTANT: The "link" field must be the actual URL of the real article you found
             with open(p, "rb") as f:
                 slides_b64.append(base64.b64encode(f.read()).decode())
 
+        link = inp.get("link", "")
+        caption = inp["caption"]
+        if link and link != "https://actual-article-url.com":
+            caption = caption + f"\n\n🔗 Source: {link}"
         result_data = {
             "title":    inp["title"],
             "source":   inp["source"],
             "category": inp["category"],
-            "caption":  inp["caption"],
-            "link":     inp.get("link", ""),
+            "caption":  caption,
+            "link":     link,
             "slides":   slides_b64,
         }
         callback({"type": "done", **result_data})
