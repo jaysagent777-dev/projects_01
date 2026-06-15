@@ -56,7 +56,7 @@ def _get_country(ip):
 
 @app.before_request
 def log_visitor():
-    if request.path in ("/visitors", "/generate", "/health"):
+    if request.path in ("/visitors", "/generate", "/health") or request.path.startswith("/static"):
         return
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     entry = {
