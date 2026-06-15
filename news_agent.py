@@ -245,10 +245,39 @@ Headlines must grab attention. Body must be clear and informative.
 
 # ── Agent loop ────────────────────────────────────────────────────────────────
 
+DEMO_STORIES = [
+    {
+        "headline": "AI Beats Doctors at Diagnosis",
+        "body": "A new AI model outperformed specialist doctors in diagnosing rare diseases, cutting diagnosis time from months to minutes.",
+        "category": "TECH",
+        "emoji": "🤖",
+        "palette_index": 0,
+    },
+    {
+        "headline": "Arctic Ice Hits Record Low",
+        "body": "Scientists report Arctic sea ice has reached its lowest level ever recorded, raising urgent concerns about global climate tipping points.",
+        "category": "CLIMATE",
+        "emoji": "🧊",
+        "palette_index": 2,
+    },
+    {
+        "headline": "Global Economy Beats Forecasts",
+        "body": "The IMF upgraded its global growth forecast for 2026, citing stronger-than-expected consumer spending across emerging markets.",
+        "category": "BUSINESS",
+        "emoji": "📈",
+        "palette_index": 3,
+    },
+]
+
 def run(topics: str = "world news, technology, climate, politics, science, business") -> None:
     if not ANTHROPIC_API_KEY:
-        print("❌  Set ANTHROPIC_API_KEY first.")
-        sys.exit(1)
+        print(f"\n🌍  NewsAgent starting (DEMO MODE — no API key needed)...\n{'─'*50}")
+        stories = DEMO_STORIES
+        print(f"\n🎨  Rendering {len(stories)} slides...")
+        paths = save_slides(stories)
+        print(f"\n📁  Slides saved to: {OUTPUT_DIR}")
+        print("\n✅  Done!")
+        return
 
     client   = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     messages = [{"role": "user", "content": f"Find today's top news and create 3 slide images. Topics to cover: {topics}"}]
