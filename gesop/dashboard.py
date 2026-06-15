@@ -23,6 +23,8 @@ visitor_log = deque(maxlen=500)
 
 @app.before_request
 def log_visitor():
+    if request.path in ("/visitors", "/generate", "/health"):
+        return
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     visitor_log.appendleft({
         "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
