@@ -100,7 +100,7 @@ def _fetch_real_article(keywords: str):
     """Fetch a real article URL and title from Google News RSS."""
     import urllib.request, urllib.parse, xml.etree.ElementTree as ET
     q = urllib.parse.quote(keywords)
-    url = f"https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:en"
+    url = f"https://news.google.com/rss/search?q={q}+after:7d&hl=en-US&gl=US&ceid=US:en&tbs=qdr:w"
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=10) as r:
         xml_data = r.read()
