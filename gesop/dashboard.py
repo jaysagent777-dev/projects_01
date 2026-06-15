@@ -20,21 +20,41 @@ IMAGES_DIR.mkdir(exist_ok=True)
 app = Flask(__name__)
 
 visitor_log = deque(maxlen=500)
+_geo_cache = {}
+
+def _get_country(ip: str) -> str:
+    if ip in _geo_cache:
+        return _geo_cache[ip]
+    try:
+        import urllib.request as ur
+        with ur.urlopen(f"http://ip-api.com/json/{ip}?fields=country,countryCode", timeout=3) as r:
+            d = json.loads(r.read())
+        result = f"{d.get('country','?')} {d.get('countryCode','')}"
+    except Exception:
+        result = "?"
+    _geo_cache[ip] = result
+    return result
 
 @app.before_request
 def log_visitor():
     if request.path in ("/visitors", "/generate", "/health"):
         return
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    country = threading.Thread(target=lambda: _get_country(ip), daemon=True)
+    country.start()
     visitor_log.appendleft({
         "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "ip": ip,
-        "method": request.method,
+        "country": _geo_cache.get(ip, "…"),
         "path": request.path,
     })
 
 @app.route("/visitors")
 def visitors():
+    # Refresh country for any entries still showing …
+    for v in visitor_log:
+        if v["country"] == "…":
+            v["country"] = _geo_cache.get(v["ip"], "…")
     return jsonify(list(visitor_log))
 
 # ── Claude CLI wrapper ────────────────────────────────────────────────────────
@@ -441,8 +461,8 @@ def index():
     <thead><tr style="color:var(--muted);">
       <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Time</th>
       <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">IP</th>
-      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Method</th>
-      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Endpoint</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Country</th>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--bdr);">Page</th>
     </tr></thead>
     <tbody id="visitors-tbody"><tr><td colspan="4" style="color:var(--muted);padding:10px;">Loading...</td></tr></tbody>
   </table>
@@ -626,12 +646,13 @@ function copyCaption() {
   });
 }
 
-let visitorsData = [];
+let visitorsData = [], visitorsTimer = null;
 function toggleVisitors() {
   const panel = document.getElementById('visitors-panel');
   const open = panel.style.display === 'none';
   panel.style.display = open ? 'block' : 'none';
-  if (open) loadVisitors();
+  if (open) { loadVisitors(); visitorsTimer = setInterval(loadVisitors, 30000); }
+  else { clearInterval(visitorsTimer); }
 }
 function loadVisitors() {
   fetch('/visitors').then(r => r.json()).then(data => {
@@ -645,10 +666,10 @@ function filterVisitors() {
   const tbody = document.getElementById('visitors-tbody');
   if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);padding:10px;">No results.</td></tr>'; return; }
   tbody.innerHTML = rows.map(v => `<tr>
-    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);color:var(--muted);">${v.time}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);color:var(--muted);white-space:nowrap;">${v.time}</td>
     <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);font-family:monospace;">${v.ip}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);color:var(--muted);">${v.method}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);">${v.path}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);">${v.country || '…'}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid var(--bdr);color:var(--muted);">${v.path}</td>
   </tr>`).join('');
 }
 </script>
