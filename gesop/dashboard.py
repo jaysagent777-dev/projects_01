@@ -7,7 +7,7 @@ Run: python3 dashboard.py  →  open http://localhost:5055
 import base64, json, os, threading, subprocess
 from collections import deque
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, Response
 
@@ -60,7 +60,7 @@ def log_visitor():
         return
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     entry = {
-        "time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "time": datetime.now(timezone(timedelta(hours=-6))).strftime("%Y-%m-%d %H:%M:%S CST"),
         "ip": ip,
         "country": _geo_cache.get(ip, "…"),
         "path": request.path,
