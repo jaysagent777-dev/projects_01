@@ -37,38 +37,61 @@ def claude_message(system: str, messages: list, model: str = "claude-opus-4-8", 
 
 # ── Agent runner (runs in background thread) ──────────────────────────────────
 
+def _fetch_real_article(keywords: str):
+    """Fetch a real article URL and title from Google News RSS."""
+    import urllib.request, urllib.parse, xml.etree.ElementTree as ET
+    q = urllib.parse.quote(keywords)
+    url = f"https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:en"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=10) as r:
+        xml_data = r.read()
+    root = ET.fromstring(xml_data)
+    items = root.findall(".//item")
+    if not items:
+        return None, None
+    item = items[0]
+    title = item.findtext("title") or ""
+    link = item.findtext("link") or ""
+    # Google News wraps links — follow redirect to get real URL
+    try:
+        req2 = urllib.request.Request(link, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req2, timeout=8) as r2:
+            link = r2.url
+    except Exception:
+        pass
+    return title, link
+
+
 def _run_agent(keywords: str, callback):
     """Run the Claude news agent via CLI and stream status updates via callback(msg)."""
     try:
         from slide_generator import generate_slides
 
         SYSTEM = """You are a social media editor creating Instagram carousel posts.
-
-Your job:
-1. Use web_search to find the most interesting recent news about the given topic/keywords.
-2. Pick the single best, most surprising or impactful story.
-3. Extract: punchy headline (max 80 chars), 2-3 sentence summary, source name, category tag (TECH/POLITICS/BUSINESS/CLIMATE/etc.), photo search keywords, and an engaging Instagram caption with 10 hashtags.
-4. Return JSON with keys: title, summary, source, category, photo_query, caption
-
-Tone: sharp, confident, no fluff. Only use facts from your search results."""
+Given a news article title and URL, write an Instagram carousel post.
+Return ONLY valid JSON with keys: title, summary, source, category, photo_query, caption.
+Tone: sharp, confident, no fluff."""
 
         callback({"type": "status", "msg": f"Searching for: {keywords}..."})
 
-        # Simpler: just ask Claude to generate JSON directly
-        prompt = f"""Search for the latest news about: {keywords}
+        real_title, real_link = _fetch_real_article(keywords)
+        if real_title:
+            callback({"type": "status", "msg": f"Found article: {real_title[:60]}"})
 
-Find the most interesting recent story from a real news source. Return ONLY valid JSON (no markdown, no extra text):
+        prompt = f"""Write an Instagram carousel post for this news article:
+
+Title: {real_title or keywords}
+URL: {real_link or ''}
+
+Return ONLY valid JSON (no markdown, no extra text):
 {{
   "title": "...",
   "summary": "...",
   "source": "...",
   "category": "...",
   "photo_query": "...",
-  "caption": "...",
-  "link": "<the real URL of the article you found>"
-}}
-
-IMPORTANT: The "link" field must be the actual URL of the real article you found during your search. Do not use a placeholder."""
+  "caption": "..."
+}}"""
 
         # Call key rotator (OpenAI-compatible endpoint)
         import urllib.request
@@ -111,16 +134,16 @@ IMPORTANT: The "link" field must be the actual URL of the real article you found
             with open(p, "rb") as f:
                 slides_b64.append(base64.b64encode(f.read()).decode())
 
-        link = inp.get("link", "")
+        link = real_link or inp.get("link", "")
         caption = inp["caption"]
-        if link and link != "https://actual-article-url.com":
+        if link:
             caption = caption + f"\n\n🔗 Source: {link}"
         result_data = {
             "title":    inp["title"],
             "source":   inp["source"],
             "category": inp["category"],
             "caption":  caption,
-            "link":     link,
+            "link":     real_link or inp.get("link", ""),
             "slides":   slides_b64,
         }
         callback({"type": "done", **result_data})
