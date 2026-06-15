@@ -51,7 +51,9 @@ def visitors():
     for v in visitor_log:
         if v["country"] == "…":
             v["country"] = _geo_cache.get(v["ip"], "…")
-    return jsonify(list(visitor_log))
+    resp = jsonify(list(visitor_log))
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    return resp
 
 
 # ── Claude CLI wrapper ────────────────────────────────────────────────────────
