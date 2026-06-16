@@ -239,39 +239,112 @@ def post_instagram():
         if not slides_b64:
             return jsonify({"error": "No slides provided"}), 400
 
-        ig_user = os.environ.get("INSTAGRAM_EMAIL", "")
-        ig_pass = os.environ.get("INSTAGRAM_PASSWORD", "")
-        if not ig_user or not ig_pass:
-            return jsonify({"error": "Instagram credentials not configured"}), 500
+        ig_cookies_b64 = os.environ.get("IG_COOKIES", "")
+        if not ig_cookies_b64:
+            return jsonify({"error": "Instagram cookies not configured (IG_COOKIES env var missing)"}), 500
 
-        from instagrapi import Client
-        import tempfile
+        import tempfile, asyncio
+        from PIL import Image
+        import io as _io
 
-        cl = Client()
-        cl.login(ig_user, ig_pass)
+        # Decode cookies
+        cookies = json.loads(base64.b64decode(ig_cookies_b64).decode())
 
-        # Save slides to temp files
-        paths = []
+        # Save slides to temp JPEG files
         tmp_dir = Path(tempfile.mkdtemp())
+        paths = []
         for i, b64 in enumerate(slides_b64):
             p = tmp_dir / f"slide_{i+1}.jpg"
             img_data = base64.b64decode(b64)
-            from PIL import Image
-            import io
-            img = Image.open(io.BytesIO(img_data)).convert("RGB")
+            img = Image.open(_io.BytesIO(img_data)).convert("RGB")
             img.save(str(p), "JPEG", quality=95)
             paths.append(str(p))
 
-        if len(paths) == 1:
-            cl.photo_upload(paths[0], caption)
-        else:
-            cl.album_upload(paths, caption)
+        async def _post():
+            from playwright.async_api import async_playwright
+            async with async_playwright() as pw:
+                browser = await pw.chromium.launch(headless=True)
+                ctx = await browser.new_context(
+                    user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
+                    viewport={"width": 390, "height": 844},
+                )
+                await ctx.add_cookies(cookies)
+                page = await ctx.new_page()
 
-        # Cleanup
+                # Go to Instagram home
+                await page.goto("https://www.instagram.com/", wait_until="domcontentloaded")
+                await page.wait_for_timeout(2000)
+
+                # Click the "+" create button
+                create_btn = await page.query_selector('svg[aria-label="New post"]')
+                if not create_btn:
+                    # Try alternate selectors
+                    create_btn = await page.query_selector('[aria-label="New post"]')
+                if create_btn:
+                    await create_btn.click()
+                else:
+                    # Click by text
+                    await page.click('text=Create')
+                await page.wait_for_timeout(1500)
+
+                # Upload first file
+                file_input = await page.query_selector('input[type="file"]')
+                if not file_input:
+                    raise Exception("Could not find file input on Instagram")
+
+                await file_input.set_input_files(paths[0])
+                await page.wait_for_timeout(2000)
+
+                # If multiple slides, add remaining
+                if len(paths) > 1:
+                    for extra_path in paths[1:]:
+                        add_btn = await page.query_selector('[aria-label="Open media gallery"]')
+                        if add_btn:
+                            await add_btn.click()
+                            await page.wait_for_timeout(1000)
+                        file_input2 = await page.query_selector('input[type="file"]')
+                        if file_input2:
+                            await file_input2.set_input_files(extra_path)
+                            await page.wait_for_timeout(1500)
+
+                # Click Next
+                next_btn = await page.query_selector('[aria-label="Next"]') or await page.query_selector('button:has-text("Next")')
+                if next_btn:
+                    await next_btn.click()
+                    await page.wait_for_timeout(1500)
+                    # May need to click Next again (crop step)
+                    next_btn2 = await page.query_selector('[aria-label="Next"]') or await page.query_selector('button:has-text("Next")')
+                    if next_btn2:
+                        await next_btn2.click()
+                        await page.wait_for_timeout(1500)
+
+                # Type caption
+                caption_box = await page.query_selector('[aria-label="Write a caption..."]') or await page.query_selector('textarea[placeholder]')
+                if caption_box:
+                    await caption_box.click()
+                    await caption_box.fill(caption)
+                    await page.wait_for_timeout(500)
+
+                # Click Share
+                share_btn = await page.query_selector('button:has-text("Share")') or await page.query_selector('[aria-label="Share"]')
+                if share_btn:
+                    await share_btn.click()
+                    await page.wait_for_timeout(4000)
+                else:
+                    raise Exception("Could not find Share button")
+
+                await browser.close()
+
+        asyncio.run(_post())
+
+        # Cleanup temp files
         for p in paths:
-            os.remove(p)
+            try:
+                os.remove(p)
+            except Exception:
+                pass
 
-        return jsonify({"success": True, "message": "Posted to Instagram!"})
+        return jsonify({"success": True, "message": "Posted to Instagram! ✅"})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
