@@ -232,6 +232,11 @@ Return ONLY valid JSON (no markdown, no extra text):
 @app.route("/post-instagram", methods=["POST"])
 def post_instagram():
     try:
+        import time as _time
+        import requests as _req
+        import io as _io
+        from PIL import Image as _Image
+
         data = request.get_json()
         slides_b64 = data.get("slides", [])
         caption = data.get("caption", "")
@@ -241,110 +246,100 @@ def post_instagram():
 
         ig_cookies_b64 = os.environ.get("IG_COOKIES", "")
         if not ig_cookies_b64:
-            return jsonify({"error": "Instagram cookies not configured (IG_COOKIES env var missing)"}), 500
+            return jsonify({"error": "IG_COOKIES env var not set"}), 500
 
-        import tempfile, asyncio
-        from PIL import Image
-        import io as _io
-
-        # Decode cookies
         cookies = json.loads(base64.b64decode(ig_cookies_b64).decode())
+        cookie_dict = {c["name"]: c["value"] for c in cookies}
+        csrf = cookie_dict.get("csrftoken", "")
 
-        # Save slides to temp JPEG files
-        tmp_dir = Path(tempfile.mkdtemp())
-        paths = []
-        for i, b64 in enumerate(slides_b64):
-            p = tmp_dir / f"slide_{i+1}.jpg"
-            img_data = base64.b64decode(b64)
-            img = Image.open(_io.BytesIO(img_data)).convert("RGB")
-            img.save(str(p), "JPEG", quality=95)
-            paths.append(str(p))
+        session = _req.Session()
+        for c in cookies:
+            session.cookies.set(c["name"], c["value"], domain=".instagram.com")
 
-        async def _post():
-            from playwright.async_api import async_playwright
-            async with async_playwright() as pw:
-                browser = await pw.chromium.launch(headless=True)
-                ctx = await browser.new_context(
-                    user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
-                    viewport={"width": 390, "height": 844},
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+            "X-CSRFToken": csrf,
+            "X-IG-App-ID": "936619743392459",
+            "X-IG-WWW-Claim": "0",
+            "X-Requested-With": "XMLHttpRequest",
+            "Referer": "https://www.instagram.com/",
+            "Origin": "https://www.instagram.com",
+        })
+
+        def _upload_photo(b64_data):
+            img_data = base64.b64decode(b64_data)
+            img = _Image.open(_io.BytesIO(img_data)).convert("RGB")
+            buf = _io.BytesIO()
+            img.save(buf, "JPEG", quality=90)
+            img_bytes = buf.getvalue()
+
+            upload_id = str(int(_time.time() * 1000))
+            upload_name = f"{upload_id}_0_-{upload_id}"
+
+            r = session.post(
+                f"https://www.instagram.com/rupload_igphoto/{upload_name}",
+                data=img_bytes,
+                headers={
+                    "Content-Type": "image/jpeg",
+                    "X-Entity-Type": "image/jpeg",
+                    "X-Entity-Name": upload_name,
+                    "X-Entity-Length": str(len(img_bytes)),
+                    "Offset": "0",
+                    "X-Instagram-Rupload-Params": json.dumps({
+                        "upload_id": upload_id,
+                        "xsharing_user_ids": "[]",
+                        "image_compression": json.dumps({"lib_name": "moz", "lib_version": "3.1.m", "quality": "80"}),
+                    }),
+                },
+            )
+            r.raise_for_status()
+            return r.json().get("upload_id", upload_id)
+
+        if len(slides_b64) == 1:
+            # Single photo post
+            uid = _upload_photo(slides_b64[0])
+            r = session.post(
+                "https://www.instagram.com/api/v1/media/configure/",
+                data={
+                    "upload_id": uid,
+                    "caption": caption,
+                    "usertags": '{"in":[]}',
+                    "custom_accessibility_caption": "",
+                    "like_and_view_counts_disabled": "0",
+                    "disable_comments": "0",
+                    "source_type": "4",
+                },
+            )
+        else:
+            # Carousel post
+            children = []
+            for b64 in slides_b64:
+                uid = _upload_photo(b64)
+                _time.sleep(0.5)
+                # sidecar child configure
+                rc = session.post(
+                    "https://www.instagram.com/api/v1/media/configure_sidecar/",
+                    data={
+                        "upload_id": uid,
+                        "is_sidecar": "1",
+                    },
                 )
-                await ctx.add_cookies(cookies)
-                page = await ctx.new_page()
+                children.append({"upload_id": uid})
 
-                # Go to Instagram home
-                await page.goto("https://www.instagram.com/", wait_until="domcontentloaded")
-                await page.wait_for_timeout(2000)
+            r = session.post(
+                "https://www.instagram.com/api/v1/media/configure_sidecar/",
+                data={
+                    "caption": caption,
+                    "children_metadata": json.dumps(children),
+                    "source_type": "4",
+                },
+            )
 
-                # Click the "+" create button
-                create_btn = await page.query_selector('svg[aria-label="New post"]')
-                if not create_btn:
-                    # Try alternate selectors
-                    create_btn = await page.query_selector('[aria-label="New post"]')
-                if create_btn:
-                    await create_btn.click()
-                else:
-                    # Click by text
-                    await page.click('text=Create')
-                await page.wait_for_timeout(1500)
-
-                # Upload first file
-                file_input = await page.query_selector('input[type="file"]')
-                if not file_input:
-                    raise Exception("Could not find file input on Instagram")
-
-                await file_input.set_input_files(paths[0])
-                await page.wait_for_timeout(2000)
-
-                # If multiple slides, add remaining
-                if len(paths) > 1:
-                    for extra_path in paths[1:]:
-                        add_btn = await page.query_selector('[aria-label="Open media gallery"]')
-                        if add_btn:
-                            await add_btn.click()
-                            await page.wait_for_timeout(1000)
-                        file_input2 = await page.query_selector('input[type="file"]')
-                        if file_input2:
-                            await file_input2.set_input_files(extra_path)
-                            await page.wait_for_timeout(1500)
-
-                # Click Next
-                next_btn = await page.query_selector('[aria-label="Next"]') or await page.query_selector('button:has-text("Next")')
-                if next_btn:
-                    await next_btn.click()
-                    await page.wait_for_timeout(1500)
-                    # May need to click Next again (crop step)
-                    next_btn2 = await page.query_selector('[aria-label="Next"]') or await page.query_selector('button:has-text("Next")')
-                    if next_btn2:
-                        await next_btn2.click()
-                        await page.wait_for_timeout(1500)
-
-                # Type caption
-                caption_box = await page.query_selector('[aria-label="Write a caption..."]') or await page.query_selector('textarea[placeholder]')
-                if caption_box:
-                    await caption_box.click()
-                    await caption_box.fill(caption)
-                    await page.wait_for_timeout(500)
-
-                # Click Share
-                share_btn = await page.query_selector('button:has-text("Share")') or await page.query_selector('[aria-label="Share"]')
-                if share_btn:
-                    await share_btn.click()
-                    await page.wait_for_timeout(4000)
-                else:
-                    raise Exception("Could not find Share button")
-
-                await browser.close()
-
-        asyncio.run(_post())
-
-        # Cleanup temp files
-        for p in paths:
-            try:
-                os.remove(p)
-            except Exception:
-                pass
-
-        return jsonify({"success": True, "message": "Posted to Instagram! ✅"})
+        r.raise_for_status()
+        result = r.json()
+        if result.get("status") == "ok" or result.get("media"):
+            return jsonify({"success": True, "message": "Posted to Instagram! ✅"})
+        return jsonify({"error": result.get("message", "Unknown error from Instagram")}), 500
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
