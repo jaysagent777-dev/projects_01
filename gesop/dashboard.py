@@ -789,23 +789,112 @@ async function postToInstagram() {
   const btn = document.getElementById('ig-btn');
   btn.textContent = '⏳ Posting...';
   btn.disabled = true;
+
   try {
-    const res = await fetch('/post-instagram', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({slides: currentSlides, caption: currentCaption})
-    });
-    const d = await res.json();
-    if (d.success) {
+    // Get CSRF token from Instagram cookies (readable by JS)
+    const csrf = document.cookie.split(';').map(c=>c.trim())
+      .find(c=>c.startsWith('csrftoken='))?.split('=')[1];
+    if (!csrf) throw new Error('Not logged in to Instagram in this browser. Open instagram.com first.');
+
+    const igHeaders = {
+      'X-CSRFToken': csrf,
+      'X-IG-App-ID': '936619743392459',
+      'X-IG-WWW-Claim': '0',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Referer': 'https://www.instagram.com/',
+    };
+
+    // Helper: base64 → Uint8Array
+    function b64toBytes(b64) {
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
+
+    // Upload one slide directly to Instagram from the browser
+    async function uploadSlide(b64) {
+      const bytes = b64toBytes(b64);
+      const uploadId = String(Date.now());
+      const uploadName = uploadId + '_0_-' + uploadId;
+      const ruploadParams = JSON.stringify({
+        upload_id: uploadId,
+        xsharing_user_ids: '[]',
+        image_compression: JSON.stringify({lib_name:'moz',lib_version:'3.1.m',quality:'80'})
+      });
+      const r = await fetch('https://www.instagram.com/rupload_igphoto/' + uploadName, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          ...igHeaders,
+          'Content-Type': 'image/jpeg',
+          'X-Entity-Type': 'image/jpeg',
+          'X-Entity-Name': uploadName,
+          'X-Entity-Length': String(bytes.length),
+          'Offset': '0',
+          'X-Instagram-Rupload-Params': ruploadParams,
+        },
+        body: bytes,
+      });
+      const d = await r.json();
+      if (!d.upload_id) throw new Error('Upload failed: ' + JSON.stringify(d));
+      return d.upload_id;
+    }
+
+    btn.textContent = '⏳ Uploading slides...';
+
+    // Upload all slides
+    const uploadIds = [];
+    for (const slide of currentSlides) {
+      const uid = await uploadSlide(slide);
+      uploadIds.push(uid);
+      await new Promise(r => setTimeout(r, 800));
+    }
+
+    btn.textContent = '⏳ Publishing...';
+
+    let publishRes;
+    if (uploadIds.length === 1) {
+      // Single photo
+      const form = new FormData();
+      form.append('upload_id', uploadIds[0]);
+      form.append('caption', currentCaption);
+      form.append('usertags', '{"in":[]}');
+      form.append('source_type', '4');
+      publishRes = await fetch('https://www.instagram.com/api/v1/media/configure/', {
+        method: 'POST', credentials: 'include',
+        headers: igHeaders,
+        body: form,
+      });
+    } else {
+      // Carousel
+      const sidecarId = String(Date.now());
+      const children = uploadIds.map(uid => ({upload_id: uid, source_type: '4'}));
+      publishRes = await fetch('https://www.instagram.com/api/v1/media/configure_sidecar/', {
+        method: 'POST', credentials: 'include',
+        headers: {...igHeaders, 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          caption: currentCaption,
+          children_metadata: children,
+          source_type: '4',
+          client_sidecar_id: sidecarId,
+        }),
+      });
+    }
+
+    const result = await publishRes.json();
+    if (result.media || result.status === 'ok') {
       btn.textContent = '✅ Posted!';
       btn.style.borderColor = '#22c55e';
       btn.style.color = '#22c55e';
     } else {
-      btn.textContent = '❌ Failed: ' + d.error;
-      btn.disabled = false;
+      throw new Error(result.message || JSON.stringify(result));
     }
+
   } catch(e) {
-    btn.textContent = '❌ Error';
+    btn.textContent = '❌ ' + e.message;
+    btn.style.borderColor = '#ef4444';
+    btn.style.color = '#ef4444';
     btn.disabled = false;
   }
 }
