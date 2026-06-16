@@ -237,7 +237,14 @@ def post_instagram():
         import io as _io
         from PIL import Image as _Image
 
-        data = request.get_json()
+        raw = request.data
+        try:
+            data = json.loads(raw)
+        except Exception as parse_err:
+            # Show first 200 chars around the problem
+            raw_str = raw.decode("utf-8", errors="replace")
+            snippet = raw_str[max(0, 590):610]
+            return jsonify({"error": f"JSON parse failed: {parse_err} | snippet@600: {repr(snippet)}"}), 400
         slides_b64 = data.get("slides", [])
         caption = data.get("caption", "")
 
