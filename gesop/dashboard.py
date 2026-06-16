@@ -227,6 +227,56 @@ Return ONLY valid JSON (no markdown, no extra text):
         callback({"type": "error", "msg": str(e)})
 
 
+# ── Instagram post endpoint ───────────────────────────────────────────────────
+
+@app.route("/post-instagram", methods=["POST"])
+def post_instagram():
+    try:
+        data = request.get_json()
+        slides_b64 = data.get("slides", [])
+        caption = data.get("caption", "")
+
+        if not slides_b64:
+            return jsonify({"error": "No slides provided"}), 400
+
+        ig_user = os.environ.get("INSTAGRAM_EMAIL", "")
+        ig_pass = os.environ.get("INSTAGRAM_PASSWORD", "")
+        if not ig_user or not ig_pass:
+            return jsonify({"error": "Instagram credentials not configured"}), 500
+
+        from instagrapi import Client
+        import tempfile
+
+        cl = Client()
+        cl.login(ig_user, ig_pass)
+
+        # Save slides to temp files
+        paths = []
+        tmp_dir = Path(tempfile.mkdtemp())
+        for i, b64 in enumerate(slides_b64):
+            p = tmp_dir / f"slide_{i+1}.jpg"
+            img_data = base64.b64decode(b64)
+            from PIL import Image
+            import io
+            img = Image.open(io.BytesIO(img_data)).convert("RGB")
+            img.save(str(p), "JPEG", quality=95)
+            paths.append(str(p))
+
+        if len(paths) == 1:
+            cl.photo_upload(paths[0], caption)
+        else:
+            cl.album_upload(paths, caption)
+
+        # Cleanup
+        for p in paths:
+            os.remove(p)
+
+        return jsonify({"success": True, "message": "Posted to Instagram!"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ── SSE endpoint ──────────────────────────────────────────────────────────────
 
 @app.route("/generate")
@@ -529,6 +579,7 @@ def index():
     <div class="actions">
       <button class="btn btn-primary" onclick="downloadSlides()">Download Slides</button>
       <button class="btn btn-outline" onclick="copyCaption()">Copy Caption</button>
+      <button class="btn btn-outline" id="ig-btn" onclick="postToInstagram()" style="border-color:#e1306c;color:#e1306c;">📸 Post to Instagram</button>
     </div>
   </div>
 
@@ -657,10 +708,35 @@ function downloadSlides() {
 
 function copyCaption() {
   navigator.clipboard.writeText(currentCaption).then(() => {
-    const btn = document.querySelector('.btn-outline');
+    const btn = document.querySelectorAll('.btn-outline')[0];
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = 'Copy Caption', 2000);
   });
+}
+
+async function postToInstagram() {
+  const btn = document.getElementById('ig-btn');
+  btn.textContent = '⏳ Posting...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/post-instagram', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({slides: currentSlides, caption: currentCaption})
+    });
+    const d = await res.json();
+    if (d.success) {
+      btn.textContent = '✅ Posted!';
+      btn.style.borderColor = '#22c55e';
+      btn.style.color = '#22c55e';
+    } else {
+      btn.textContent = '❌ Failed: ' + d.error;
+      btn.disabled = false;
+    }
+  } catch(e) {
+    btn.textContent = '❌ Error';
+    btn.disabled = false;
+  }
 }
 
 </script>
