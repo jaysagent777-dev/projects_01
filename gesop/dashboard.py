@@ -208,6 +208,21 @@ Return ONLY valid JSON (no markdown, no extra text):
         }
         callback({"type": "done", **result_data})
 
+        # Send to Make webhook for Instagram posting
+        MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK_URL", "https://hook.us2.make.com/zt2wrvl84tfhn1k857jx3yhg6mo36nrw")
+        try:
+            import urllib.request as ur
+            payload = json.dumps({
+                "title":   inp["title"],
+                "caption": caption,
+                "link":    real_link or inp.get("link", ""),
+                "slides":  slides_b64,
+            }).encode()
+            req = ur.Request(MAKE_WEBHOOK, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+            ur.urlopen(req, timeout=10)
+        except Exception:
+            pass
+
     except Exception as e:
         callback({"type": "error", "msg": str(e)})
 
