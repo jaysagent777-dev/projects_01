@@ -302,13 +302,19 @@ def post_instagram():
             r.raise_for_status()
             return r.json().get("upload_id", upload_id)
 
-        if len(slides_b64) == 1:
+        # Upload all slides
+        upload_ids = []
+        for b64 in slides_b64:
+            uid = _upload_photo(b64)
+            upload_ids.append(uid)
+            _time.sleep(0.8)
+
+        if len(upload_ids) == 1:
             # Single photo post
-            uid = _upload_photo(slides_b64[0])
             r = session.post(
                 "https://www.instagram.com/api/v1/media/configure/",
                 data={
-                    "upload_id": uid,
+                    "upload_id": upload_ids[0],
                     "caption": caption,
                     "usertags": '{"in":[]}',
                     "custom_accessibility_caption": "",
@@ -318,28 +324,18 @@ def post_instagram():
                 },
             )
         else:
-            # Carousel post
-            children = []
-            for b64 in slides_b64:
-                uid = _upload_photo(b64)
-                _time.sleep(0.5)
-                # sidecar child configure
-                rc = session.post(
-                    "https://www.instagram.com/api/v1/media/configure_sidecar/",
-                    data={
-                        "upload_id": uid,
-                        "is_sidecar": "1",
-                    },
-                )
-                children.append({"upload_id": uid})
-
+            # Carousel — upload each as sidecar child, then publish album
+            children_metadata = [{"upload_id": uid, "source_type": "4"} for uid in upload_ids]
             r = session.post(
                 "https://www.instagram.com/api/v1/media/configure_sidecar/",
-                data={
+                json={
                     "caption": caption,
-                    "children_metadata": json.dumps(children),
+                    "children_metadata": children_metadata,
                     "source_type": "4",
+                    "like_and_view_counts_disabled": False,
+                    "disable_comments": False,
                 },
+                headers={"Content-Type": "application/json"},
             )
 
         r.raise_for_status()
