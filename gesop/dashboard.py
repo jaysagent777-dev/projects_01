@@ -324,7 +324,8 @@ def post_instagram():
                 },
             )
         else:
-            # Carousel — upload each as sidecar child, then publish album
+            # Carousel — publish all uploaded images as album
+            client_sidecar_id = str(int(_time.time() * 1000))
             children_metadata = [{"upload_id": uid, "source_type": "4"} for uid in upload_ids]
             r = session.post(
                 "https://www.instagram.com/api/v1/media/configure_sidecar/",
@@ -332,8 +333,7 @@ def post_instagram():
                     "caption": caption,
                     "children_metadata": children_metadata,
                     "source_type": "4",
-                    "like_and_view_counts_disabled": False,
-                    "disable_comments": False,
+                    "client_sidecar_id": client_sidecar_id,
                 },
                 headers={"Content-Type": "application/json"},
             )
