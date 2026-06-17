@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = "https://styabu-server-production.up.railway.app";
 
 async function getToken() {
   return AsyncStorage.getItem("token");

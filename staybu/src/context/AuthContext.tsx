@@ -20,10 +20,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.multiGet(["token", "user"]).then(([t, u]) => {
-      if (t[1] && u[1]) {
-        setToken(t[1]);
-        setUser(JSON.parse(u[1]));
+    Promise.all([
+      AsyncStorage.getItem("token"),
+      AsyncStorage.getItem("user"),
+    ]).then(([t, u]) => {
+      if (t && u) {
+        setToken(t);
+        setUser(JSON.parse(u));
       }
       setLoading(false);
     });
@@ -31,20 +34,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const res = await api.login(email, password);
-    await AsyncStorage.multiSet([["token", res.token], ["user", JSON.stringify(res.user)]]);
+    await AsyncStorage.setItem("token", res.token);
+    await AsyncStorage.setItem("user", JSON.stringify(res.user));
     setToken(res.token);
     setUser(res.user);
   };
 
   const register = async (name: string, email: string, password: string) => {
     const res = await api.register(name, email, password);
-    await AsyncStorage.multiSet([["token", res.token], ["user", JSON.stringify(res.user)]]);
+    await AsyncStorage.setItem("token", res.token);
+    await AsyncStorage.setItem("user", JSON.stringify(res.user));
     setToken(res.token);
     setUser(res.user);
   };
 
   const logout = async () => {
-    await AsyncStorage.multiRemove(["token", "user"]);
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
