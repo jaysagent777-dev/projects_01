@@ -5,8 +5,9 @@ Run: python3 dashboard.py  →  open http://localhost:5055
 """
 
 import base64, json, os, threading, subprocess
+from collections import deque
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, Response
 
@@ -17,6 +18,64 @@ IMAGES_DIR = Path("generated_images")
 IMAGES_DIR.mkdir(exist_ok=True)
 
 app = Flask(__name__)
+
+VISITORS_FILE = Path("data/visitors.json")
+VISITORS_FILE.parent.mkdir(exist_ok=True)
+_geo_cache = {}
+_log_lock = threading.Lock()
+
+def _load_visitors():
+    if VISITORS_FILE.exists():
+        try:
+            return json.loads(VISITORS_FILE.read_text())
+        except Exception:
+            pass
+    return []
+
+def _save_visitors(entries):
+    VISITORS_FILE.write_text(json.dumps(entries[-500:], indent=2))
+
+visitor_log = deque(_load_visitors(), maxlen=500)
+
+def _get_country(ip):
+    if ip in _geo_cache:
+        return
+    try:
+        import urllib.request as ur
+        with ur.urlopen(f"http://ip-api.com/json/{ip}?fields=country,countryCode", timeout=3) as r:
+            d = json.loads(r.read())
+        _geo_cache[ip] = f"{d.get('country','?')} {d.get('countryCode','')}"
+    except Exception:
+        _geo_cache[ip] = "?"
+    # update country in log and persist
+    with _log_lock:
+        for v in visitor_log:
+            if v["ip"] == ip and v["country"] == "…":
+                v["country"] = _geo_cache.get(ip, "?")
+        _save_visitors(list(visitor_log))
+
+@app.before_request
+def log_visitor():
+    if request.path in ("/visitors", "/generate", "/health") or request.path.startswith("/static"):
+        return
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    entry = {
+        "time": datetime.now(timezone(timedelta(hours=-6))).strftime("%Y-%m-%d %H:%M:%S CST"),
+        "ip": ip,
+        "country": _geo_cache.get(ip, "…"),
+        "path": request.path,
+    }
+    with _log_lock:
+        visitor_log.appendleft(entry)
+        _save_visitors(list(visitor_log))
+    threading.Thread(target=_get_country, args=(ip,), daemon=True).start()
+
+@app.route("/visitors")
+def visitors():
+    resp = jsonify(list(visitor_log))
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    return resp
+
 
 # ── Claude CLI wrapper ────────────────────────────────────────────────────────
 
@@ -37,38 +96,62 @@ def claude_message(system: str, messages: list, model: str = "claude-opus-4-8", 
 
 # ── Agent runner (runs in background thread) ──────────────────────────────────
 
+def _fetch_real_article(keywords: str):
+    """Fetch a real article URL and title from Google News RSS."""
+    import urllib.request, urllib.parse, xml.etree.ElementTree as ET
+    q = urllib.parse.quote(keywords)
+    url = f"https://news.google.com/rss/search?q={q}+after:7d&hl=en-US&gl=US&ceid=US:en&tbs=qdr:w"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=10) as r:
+        xml_data = r.read()
+    root = ET.fromstring(xml_data)
+    items = root.findall(".//item")
+    if not items:
+        return None, None
+    item = items[0]
+    title = item.findtext("title") or ""
+    link = item.findtext("link") or ""
+    # Google News wraps links — follow redirect to get real URL
+    try:
+        req2 = urllib.request.Request(link, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req2, timeout=8) as r2:
+            link = r2.url
+    except Exception:
+        pass
+    return title, link
+
+
 def _run_agent(keywords: str, callback):
     """Run the Claude news agent via CLI and stream status updates via callback(msg)."""
     try:
         from slide_generator import generate_slides
 
         SYSTEM = """You are a social media editor creating Instagram carousel posts.
-
-Your job:
-1. Use web_search to find the most interesting recent news about the given topic/keywords.
-2. Pick the single best, most surprising or impactful story.
-3. Extract: punchy headline (max 80 chars), 2-3 sentence summary, source name, category tag (TECH/POLITICS/BUSINESS/CLIMATE/etc.), photo search keywords, and an engaging Instagram caption with 10 hashtags.
-4. Return JSON with keys: title, summary, source, category, photo_query, caption
-
-Tone: sharp, confident, no fluff. Only use facts from your search results."""
+Given a news article title and URL, write an Instagram carousel post.
+Return ONLY valid JSON with keys: title, summary, source, category, photo_query, caption.
+Tone: sharp, confident, no fluff."""
 
         callback({"type": "status", "msg": f"Searching for: {keywords}..."})
 
-        # Simpler: just ask Claude to generate JSON directly
-        prompt = f"""Search for the latest news about: {keywords}
+        real_title, real_link = _fetch_real_article(keywords)
+        if real_title:
+            callback({"type": "status", "msg": f"Found article: {real_title[:60]}"})
 
-Find the most interesting recent story from a real news source. Return ONLY valid JSON (no markdown, no extra text):
+        prompt = f"""Write an Instagram carousel post for this news article:
+
+Title: {real_title or keywords}
+URL: {real_link or ''}
+
+Return ONLY valid JSON (no markdown, no extra text):
 {{
   "title": "...",
-  "summary": "...",
+  "summary": "2-3 sentence overview of the story",
+  "details": "3-4 sentences with key facts, numbers, quotes or context that go deeper than the summary",
   "source": "...",
   "category": "...",
   "photo_query": "...",
-  "caption": "...",
-  "link": "<the real URL of the article you found>"
-}}
-
-IMPORTANT: The "link" field must be the actual URL of the real article you found during your search. Do not use a placeholder."""
+  "caption": "..."
+}}"""
 
         # Call key rotator (OpenAI-compatible endpoint)
         import urllib.request
@@ -111,22 +194,182 @@ IMPORTANT: The "link" field must be the actual URL of the real article you found
             with open(p, "rb") as f:
                 slides_b64.append(base64.b64encode(f.read()).decode())
 
-        link = inp.get("link", "")
+        link = real_link or inp.get("link", "")
         caption = inp["caption"]
-        if link and link != "https://actual-article-url.com":
+        if link:
             caption = caption + f"\n\n🔗 Source: {link}"
         result_data = {
             "title":    inp["title"],
             "source":   inp["source"],
             "category": inp["category"],
             "caption":  caption,
-            "link":     link,
+            "link":     real_link or inp.get("link", ""),
             "slides":   slides_b64,
         }
         callback({"type": "done", **result_data})
 
+        # Send to Make webhook for Instagram posting
+        MAKE_WEBHOOK = os.environ.get("MAKE_WEBHOOK_URL", "https://hook.us2.make.com/zt2wrvl84tfhn1k857jx3yhg6mo36nrw")
+        try:
+            import urllib.request as ur
+            payload = json.dumps({
+                "title":   inp["title"],
+                "caption": caption,
+                "link":    real_link or inp.get("link", ""),
+                "slides":  slides_b64,
+            }).encode()
+            req = ur.Request(MAKE_WEBHOOK, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+            ur.urlopen(req, timeout=10)
+        except Exception:
+            pass
+
     except Exception as e:
         callback({"type": "error", "msg": str(e)})
+
+
+# ── Instagram post endpoint ───────────────────────────────────────────────────
+
+@app.route("/ig-csrf")
+def ig_csrf():
+    """Return Instagram csrf token so browser JS can use it for direct posting."""
+    ig_cookies_b64 = os.environ.get("IG_COOKIES", "")
+    if not ig_cookies_b64:
+        return jsonify({"error": "IG_COOKIES not set"}), 500
+    cookies = json.loads(base64.b64decode(ig_cookies_b64).decode())
+    cookie_dict = {c["name"]: c["value"] for c in cookies}
+    return jsonify({
+        "csrftoken": cookie_dict.get("csrftoken", ""),
+        "sessionid": cookie_dict.get("sessionid", ""),
+        "ds_user_id": cookie_dict.get("ds_user_id", ""),
+    })
+
+
+@app.route("/post-instagram", methods=["POST"])
+def post_instagram():
+    try:
+        import time as _time
+        import requests as _req
+        import io as _io
+        from PIL import Image as _Image
+
+        raw = request.data
+        try:
+            data = json.loads(raw)
+        except Exception as parse_err:
+            # Show first 200 chars around the problem
+            raw_str = raw.decode("utf-8", errors="replace")
+            snippet = raw_str[max(0, 590):610]
+            return jsonify({"error": f"JSON parse failed: {parse_err} | snippet@600: {repr(snippet)}"}), 400
+        slides_b64 = data.get("slides", [])
+        caption = data.get("caption", "")
+
+        if not slides_b64:
+            return jsonify({"error": "No slides provided"}), 400
+
+        ig_cookies_b64 = os.environ.get("IG_COOKIES", "")
+        if not ig_cookies_b64:
+            return jsonify({"error": "IG_COOKIES env var not set"}), 500
+
+        cookies = json.loads(base64.b64decode(ig_cookies_b64).decode())
+        cookie_dict = {c["name"]: c["value"] for c in cookies}
+        csrf = cookie_dict.get("csrftoken", "")
+
+        session = _req.Session()
+        for c in cookies:
+            session.cookies.set(c["name"], c["value"], domain=".instagram.com")
+
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br",
+            "X-CSRFToken": csrf,
+            "X-IG-App-ID": "936619743392459",
+            "X-IG-WWW-Claim": "0",
+            "X-Requested-With": "XMLHttpRequest",
+            "Referer": "https://www.instagram.com/",
+            "Origin": "https://www.instagram.com",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Ch-Ua": '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": '"macOS"',
+        })
+
+        def _upload_photo(b64_data):
+            img_data = base64.b64decode(b64_data)
+            img = _Image.open(_io.BytesIO(img_data)).convert("RGB")
+            buf = _io.BytesIO()
+            img.save(buf, "JPEG", quality=90)
+            img_bytes = buf.getvalue()
+
+            upload_id = str(int(_time.time() * 1000))
+            upload_name = f"{upload_id}_0_-{upload_id}"
+
+            r = session.post(
+                f"https://www.instagram.com/rupload_igphoto/{upload_name}",
+                data=img_bytes,
+                headers={
+                    "Content-Type": "image/jpeg",
+                    "X-Entity-Type": "image/jpeg",
+                    "X-Entity-Name": upload_name,
+                    "X-Entity-Length": str(len(img_bytes)),
+                    "Offset": "0",
+                    "X-Instagram-Rupload-Params": json.dumps({
+                        "upload_id": upload_id,
+                        "xsharing_user_ids": "[]",
+                        "image_compression": json.dumps({"lib_name": "moz", "lib_version": "3.1.m", "quality": "80"}),
+                    }),
+                },
+            )
+            r.raise_for_status()
+            return r.json().get("upload_id", upload_id)
+
+        # Upload all slides
+        upload_ids = []
+        for b64 in slides_b64:
+            uid = _upload_photo(b64)
+            upload_ids.append(uid)
+            _time.sleep(0.8)
+
+        if len(upload_ids) == 1:
+            # Single photo post
+            r = session.post(
+                "https://www.instagram.com/api/v1/media/configure/",
+                data={
+                    "upload_id": upload_ids[0],
+                    "caption": caption,
+                    "usertags": '{"in":[]}',
+                    "custom_accessibility_caption": "",
+                    "like_and_view_counts_disabled": "0",
+                    "disable_comments": "0",
+                    "source_type": "4",
+                },
+            )
+        else:
+            # Carousel — publish all uploaded images as album
+            client_sidecar_id = str(int(_time.time() * 1000))
+            children_metadata = [{"upload_id": uid, "source_type": "4"} for uid in upload_ids]
+            r = session.post(
+                "https://www.instagram.com/api/v1/media/configure_sidecar/",
+                json={
+                    "caption": caption,
+                    "children_metadata": children_metadata,
+                    "source_type": "4",
+                    "client_sidecar_id": client_sidecar_id,
+                },
+                headers={"Content-Type": "application/json"},
+            )
+
+        r.raise_for_status()
+        result = r.json()
+        if result.get("status") == "ok" or result.get("media"):
+            return jsonify({"success": True, "message": "Posted to Instagram! ✅"})
+        return jsonify({"error": result.get("message", "Unknown error from Instagram")}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ── SSE endpoint ──────────────────────────────────────────────────────────────
@@ -431,6 +674,7 @@ def index():
     <div class="actions">
       <button class="btn btn-primary" onclick="downloadSlides()">Download Slides</button>
       <button class="btn btn-outline" onclick="copyCaption()">Copy Caption</button>
+      <button class="btn btn-outline" id="ig-btn" onclick="postToInstagram()" style="border-color:#e1306c;color:#e1306c;">📸 Post to Instagram</button>
     </div>
   </div>
 
@@ -559,11 +803,39 @@ function downloadSlides() {
 
 function copyCaption() {
   navigator.clipboard.writeText(currentCaption).then(() => {
-    const btn = document.querySelector('.btn-outline');
+    const btn = document.querySelectorAll('.btn-outline')[0];
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = 'Copy Caption', 2000);
   });
 }
+
+async function postToInstagram() {
+  const btn = document.getElementById('ig-btn');
+  btn.textContent = '⏳ Posting...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/post-instagram', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({slides: currentSlides, caption: currentCaption})
+    });
+    const d = await res.json();
+    if (d.success) {
+      btn.textContent = '✅ Posted!';
+      btn.style.borderColor = '#22c55e';
+      btn.style.color = '#22c55e';
+    } else {
+      btn.textContent = '❌ ' + d.error;
+      btn.style.borderColor = '#ef4444';
+      btn.style.color = '#ef4444';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    btn.textContent = '❌ Error';
+    btn.disabled = false;
+  }
+}
+
 </script>
 </body>
 </html>"""
