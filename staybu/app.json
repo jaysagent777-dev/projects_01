@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "staybu",
-    "slug": "staybu",
+    "name": "styabu",
+    "slug": "styabu",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.staybu"
+      "bundleIdentifier": "com.anonymous.styabu"
     },
     "android": {
       "adaptiveIcon": {
