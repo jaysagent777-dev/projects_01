@@ -19,7 +19,10 @@ python3 server.py   # http://localhost:8080 — public, no login
 ```
 
 ## Deploy (Railway)
-One command: `./deploy.sh "message"` — rebuilds the pages and the client PDF, commits, pushes to GitHub, deploys to Railway and checks the live URL.
+One command: `./deploy.sh "message"` — rebuilds the pages and the client PDF, commits, pushes to GitHub, deploys to Railway, then publishes the built pages to GitHub Pages (`publish-pages.sh`).
+
+- Railway: https://praveen-hospitals-preview-production.up.railway.app
+- GitHub Pages: https://jaysagent777-dev.github.io/praveen-hospitals-preview/ (repo `jaysagent777-dev/praveen-hospitals-preview`, built pages only)
 
 Built from the `Dockerfile`. The preview is public (no login) but sends noindex headers and a Disallow-all robots.txt.
 To require a login again, set `PREVIEW_REQUIRE_LOGIN=1` and `PREVIEW_PASSWORD` in Railway variables (user `praveen`).

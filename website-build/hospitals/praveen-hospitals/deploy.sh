@@ -4,6 +4,7 @@
 #   2. regenerate the client PDF (proposal/Praveen-Hospitals-New-Website.pdf)
 #   3. commit this folder and push the branch to GitHub
 #   4. deploy to Railway and check the live URL answers without a login
+#   5. publish the built pages to GitHub Pages (publish-pages.sh)
 # Usage: ./deploy.sh ["commit message"]
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -45,10 +46,13 @@ echo "→ Deploying to Railway"
 railway up --project "$RAILWAY_PROJECT" --service "$RAILWAY_SERVICE" --environment "$RAILWAY_ENV" --ci
 
 echo "→ Checking $LIVE_URL"
+ok=""
 for i in $(seq 1 30); do
   code=$(curl -s -o /dev/null -w "%{http_code}" "$LIVE_URL/" || true)
-  if [ "$code" = "200" ]; then echo "  live, no login (HTTP 200)"; exit 0; fi
+  if [ "$code" = "200" ]; then echo "  Railway live, no login (HTTP 200)"; ok=1; break; fi
   sleep 5
 done
-echo "  still HTTP $code after 150s — check the Railway dashboard" >&2
-exit 1
+[ -n "$ok" ] || { echo "  Railway still HTTP $code after 150s — check the Railway dashboard" >&2; exit 1; }
+
+echo "→ Publishing to GitHub Pages"
+./publish-pages.sh
