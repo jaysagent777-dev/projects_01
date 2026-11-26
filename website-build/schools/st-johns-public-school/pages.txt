@@ -1,0 +1,6 @@
+index
+about
+academics
+campus
+activities
+contact
