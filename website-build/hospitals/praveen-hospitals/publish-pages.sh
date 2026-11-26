@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Publish the built Praveen Hospitals preview to GitHub Pages.
-# Only the 8 built pages, styles.css and site.js go into the Pages repo — no build
-# scripts, PITCH.md, screenshots or PDF. Creates the repo and turns on Pages on first run.
+# Only the 8 built pages, styles.css, site.js and the client PDF go into the Pages repo —
+# no build scripts, PITCH.md or screenshots. Creates the repo and turns on Pages on first run.
 # Usage: ./publish-pages.sh   (deploy.sh calls it)
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -22,6 +22,7 @@ cd "$tmp/site"
 git checkout -q -B main
 find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 for f in "${FILES[@]}"; do cp "$OLDPWD/$f" .; done
+cp "$OLDPWD/proposal/Praveen-Hospitals-New-Website.pdf" .   # linked from the email
 touch .nojekyll
 cat > README.md <<'EOF'
 # Praveen Hospitals — redesign preview
@@ -30,6 +31,7 @@ A free redesign preview of praveenhospitals.com (Telugu + English, WhatsApp book
 **Not the hospital's live website.** Content and photos are from the hospital's current site.
 
 Preview: https://jaysagent777-dev.github.io/praveen-hospitals-preview/
+What changed (PDF): https://jaysagent777-dev.github.io/praveen-hospitals-preview/Praveen-Hospitals-New-Website.pdf
 EOF
 git add -A
 if git diff --cached --quiet; then
