@@ -1,13 +1,13 @@
 # St. John's Public School, Vijayawada — website redesign preview
 
-Private pitch preview of a modern redesign of stjohnspublicschool.com. Not the organisation's live website.
+Private pitch preview that keeps the original site's layout and identity, modernised — stjohnspublicschool.com. Not the organisation's live website.
 Content and photos are taken from their current site.
 
-**Pages:** Home · About · Academics · Campus & Facilities · Activities · Admissions & Contact
+**Pages:** Index · About School · Management · History · Careers · Academics · Achievements · Activities · Facilities · Infrastructure · Transport · Gallery · Alumni · Enquiry · Contact Us
 
 ## Build
 ```bash
-python3 site.py          # regenerates all pages from the shared template in ../../_template
+python3 site.py          # regenerates all pages (layout + CSS in site.py, shared core in ../../_template/classic.py)
 ```
 
 ## Run locally with a password

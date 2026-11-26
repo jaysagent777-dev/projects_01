@@ -1,5 +1,8 @@
 index
 about
+management
 academics
-admissions
+admission
+disclosure
+gallery
 contact

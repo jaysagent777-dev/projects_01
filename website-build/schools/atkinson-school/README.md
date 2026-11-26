@@ -1,13 +1,13 @@
 # Atkinson Senior Secondary School, Vijayawada — website redesign preview
 
-Private pitch preview of a modern redesign of atkinsonvijayawada.edu.in. Not the organisation's live website.
+Private pitch preview that keeps the original site's layout and identity, modernised — atkinsonvijayawada.edu.in. Not the organisation's live website.
 Content and photos are taken from their current site.
 
-**Pages:** Home · About · Academics · Admissions · Contact
+**Pages:** Index · About · Management · Academics · Admission · Disclosure · Gallery · Contact
 
 ## Build
 ```bash
-python3 site.py          # regenerates all pages from the shared template in ../../_template
+python3 site.py          # regenerates all pages (layout + CSS in site.py, shared core in ../../_template/classic.py)
 ```
 
 ## Run locally with a password

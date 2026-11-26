@@ -1,13 +1,13 @@
 # Andhra Hospitals, Vijayawada — website redesign preview
 
-Private pitch preview of a modern redesign of andhrahospitals.org. Not the organisation's live website.
+Private pitch preview that keeps the original site's layout and identity, modernised — andhrahospitals.org. Not the organisation's live website.
 Content and photos are taken from their current site.
 
-**Pages:** Home · About · Specialities · 24×7 Services · Locations · Contact
+**Pages:** Index · About · Achievements · Specialities · Services · Doctors · Gallery · Careers · Locations · Contact
 
 ## Build
 ```bash
-python3 site.py          # regenerates all pages from the shared template in ../../_template
+python3 site.py          # regenerates all pages (layout + CSS in site.py, shared core in ../../_template/classic.py)
 ```
 
 ## Run locally with a password
