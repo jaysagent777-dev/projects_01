@@ -687,6 +687,20 @@ section.mint .steps3 b,.theme-teal .steps3 b{background:linear-gradient(180deg,v
 
 /* footer: brand gradient edge */
 footer{border-top:4px solid transparent;border-image:linear-gradient(90deg,var(--red),#e0533f 40%,var(--teal)) 1}
+
+/* inner pages: compact title strip, no photo banner (only the home page has the big image) */
+.phero{background:#faf8f6;padding:0}
+.phero::before,.phero::after{display:none}
+.phero .wrap{padding:34px 24px 32px}
+.phero h1{max-width:none}
+
+/* home slide 1: move the building photo right so the building sits clear of the text fade */
+.slide:first-child::before{inset:0 0 0 42%;background-position:10% center}
+.slide:first-child::after{background:linear-gradient(90deg,#fff 0%,#fff 42%,rgba(255,255,255,.7) 46%,rgba(255,255,255,0) 56%)}
+@media (max-width:980px){
+  .slide:first-child::before{inset:0;background-position:30% top}
+  .slide:first-child::after{background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.93) 52%,#fff 100%)}
+}
 """
 
 SITE_JS = r"""// Praveen Hospitals redesign preview — shared script for all pages.
