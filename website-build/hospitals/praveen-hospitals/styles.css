@@ -605,9 +605,9 @@ footer{border-top:4px solid transparent;border-image:linear-gradient(90deg,var(-
 .phero .wrap{padding:34px 24px 32px}
 .phero h1{max-width:none}
 
-/* home slide 1: move the building photo right so the building sits clear of the text fade */
-.slide:first-child::before{inset:0 0 0 42%;background-position:10% center}
-.slide:first-child::after{background:linear-gradient(90deg,#fff 0%,#fff 42%,rgba(255,255,255,.7) 46%,rgba(255,255,255,0) 56%)}
+/* home slide 1: building photo moved right and faded out so it reads as a soft background */
+.slide:first-child::before{inset:0 0 0 40%;background-position:0% center}
+.slide:first-child::after{background:linear-gradient(90deg,#fff 0%,#fff 40%,rgba(255,255,255,.82) 48%,rgba(255,255,255,.55) 62%,rgba(255,255,255,.45) 100%)}
 @media (max-width:980px){
   .slide:first-child::before{inset:0;background-position:30% top}
   .slide:first-child::after{background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.93) 52%,#fff 100%)}
