@@ -145,7 +145,7 @@ SLIDES = [
      t("Cath-lab, diagnostics and theatres in one building — so treatment starts faster.", "క్యాథ్ ల్యాబ్, డయాగ్నొస్టిక్స్, థియేటర్లు — అన్నీ ఒకే భవనంలో, చికిత్స త్వరగా మొదలవుతుంది."),
      f'<a class="btn btn-red" href="services.html">{t("Our services", "మా సేవలు")} →</a>'),
     ("slider/banner_2.jpg", t("Heart care since 2007", "2007 నుండి గుండె వైద్యం"), t("11,500+ angiograms. 99.6% stent success.", "11,500+ యాంజియోగ్రామ్‌లు. 99.6% స్టెంట్ విజయం."),
-     t("4,000 stents and 2,000 bypass surgeries in 14 years, as reported by the hospital.", "14 సంవత్సరాలలో 4,000 స్టెంట్లు, 2,000 బైపాస్ సర్జరీలు — ఆసుపత్రి నివేదిక ప్రకారం."),
+     t("4,000 stents and 2,000 bypass surgeries since 2007, as reported by the hospital.", "2007 నుండి 4,000 స్టెంట్లు, 2,000 బైపాస్ సర్జరీలు — ఆసుపత్రి నివేదిక ప్రకారం."),
      f'<a class="btn btn-red" href="specialities.html">{t("Our specialities", "మా విభాగాలు")} →</a>'),
     ("slider/banner_1.jpg", t("Cashless treatment", "క్యాష్‌లెస్ చికిత్స"), t("Aarogyasri, EHS, ECHS &amp; all TPA insurance.", "ఆరోగ్యశ్రీ, EHS, ECHS &amp; అన్ని TPA ఇన్సూరెన్స్‌లు."),
      t("Treatment at CGHS rates under 12 government schemes and insurers.", "12 ప్రభుత్వ పథకాలు, ఇన్సూరెన్స్‌లతో CGHS ధరలకే చికిత్స."),
@@ -256,7 +256,7 @@ PAGES["about"] = ("About Us", page_hero(t("About Us", "మా గురించ
 
 # ── SERVICES ──
 PAGES["services"] = ("Services", page_hero(t("Services", "సేవలు"), t("100-bed hospital. Latest ICU. Modular OT.", "100 పడకల ఆసుపత్రి. ఆధునిక ICU. మాడ్యులర్ OT."),
-    t("In 14 years: 11,500+ angiograms, 4,000 stents with a 99.6% success rate and 2,000 bypass surgeries with a 98% success rate.", "14 సంవత్సరాలలో: 11,500కు పైగా యాంజియోగ్రామ్‌లు, 99.6% విజయ శాతంతో 4,000 స్టెంట్లు, 98% విజయ శాతంతో 2,000 బైపాస్ సర్జరీలు."), "slider/banner_3.jpg") + f"""
+    t("Since 2007: 11,500+ angiograms, 4,000 stents with a 99.6% success rate and 2,000 bypass surgeries with a 98% success rate.", "2007 నుండి: 11,500కు పైగా యాంజియోగ్రామ్‌లు, 99.6% విజయ శాతంతో 4,000 స్టెంట్లు, 98% విజయ శాతంతో 2,000 బైపాస్ సర్జరీలు."), "slider/banner_3.jpg") + f"""
 <section><div class="wrap svc">
   <div class="svc-card reveal"><img src="{IMG}services/cardiology.png" alt="" loading="lazy">
     <h3>{t("Cardiology services", "కార్డియాలజీ సేవలు")}</h3>

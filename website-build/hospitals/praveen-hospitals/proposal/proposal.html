@@ -3,77 +3,101 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Praveen Hospitals — New Website Proposal</title>
+<title>Praveen Hospitals — New Website</title>
 <style>
   :root{--red:#c62828;--red-soft:#fdecec;--teal:#0e7c6b;--teal-soft:#e6f4f1;--ink:#16202e;--muted:#5b6675;--line:#e3e7ec;--bg:#ffffff}
-  @page{size:A4;margin:16mm 15mm}
+  @page{size:A4;margin:14mm 14mm 16mm}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:10.5pt/1.5 -apple-system,"Segoe UI",Inter,Helvetica,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .page{max-width:180mm;margin:0 auto;padding:0 16px}
+  body{margin:0;background:var(--bg);color:var(--ink);font:10pt/1.5 -apple-system,"Segoe UI",Inter,Helvetica,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{max-width:182mm;margin:0 auto;padding:0 16px}
   .break{break-before:page}
   h1{font-size:26pt;line-height:1.1;margin:0 0 6px;letter-spacing:-.02em}
-  h2{font-size:15pt;margin:0 0 10px;letter-spacing:-.01em}
-  h3{font-size:11pt;margin:0 0 4px}
+  h2{font-size:16pt;margin:0 0 8px;letter-spacing:-.01em;break-after:avoid}
+  h3{font-size:11.5pt;margin:0 0 6px;break-after:avoid}
   p{margin:0 0 8px}
-  .eyebrow{color:var(--red);font-weight:700;font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+  a{color:var(--red);text-decoration:none;font-weight:700}
+  .eyebrow{color:var(--red);font-weight:700;font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
   .muted{color:var(--muted)}
-  header.cover{border-bottom:3px solid var(--red);padding:6px 0 14px;margin-bottom:16px}
+  header.cover{border-bottom:3px solid var(--red);padding:4px 0 14px;margin-bottom:14px}
+  .lead{font-size:11.5pt}
   .meta{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:9pt;color:var(--muted);margin-top:8px}
   .meta b{color:var(--ink)}
+  .linkbox{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--teal-soft);border-radius:12px;padding:12px 14px;margin:12px 0 4px}
+  .linkbox b{display:block;font-size:10.5pt}
+  .linkbox .url{font-size:10.5pt;word-break:break-all}
+  .free{display:inline-block;background:var(--teal);color:#fff;font-weight:800;font-size:9pt;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px}
   section{margin:0 0 14px}
-  .lead{font-size:11.5pt}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 4px}
-  .stat{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
-  .stat b{display:block;font-size:17pt;color:var(--red);line-height:1.1}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 4px}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center}
+  .stat b{display:block;font-size:16pt;color:var(--red);line-height:1.1}
   .stat span{font-size:8.5pt;color:var(--muted)}
-  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start}
-  .shot{margin:0}
-  .shot img{width:100%;display:block;border:1px solid var(--line);border-radius:14px}
-  .shot figcaption{font-size:8.5pt;margin-top:6px;color:var(--muted)}
-  .shot figcaption b{display:block;color:var(--ink);font-size:9.5pt}
-  .tag{display:inline-block;font-size:7.5pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-bottom:4px}
-  .tag.now{background:#eef0f3;color:var(--muted)}
-  .tag.new{background:var(--teal-soft);color:var(--teal)}
+  .end{break-inside:avoid}
   ul.found{margin:0;padding:0;list-style:none;display:grid;gap:4px}
   ul.found li{border-left:3px solid var(--red);background:var(--red-soft);padding:5px 10px;border-radius:0 8px 8px 0;font-size:9.5pt}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .card{border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:9.5pt}
-  .card ul{margin:4px 0 0;padding-left:16px}
-  .card li{margin-bottom:1px}
-  .card h3{color:var(--teal)}
+  .toc{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:9.5pt;margin-top:6px}
+  .toc div{border-bottom:1px dotted var(--line);padding:3px 0}
+  .part{background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:10px}
+  .part .eyebrow{color:#ffb3b3;margin:0 0 2px}
+  .part h2{margin:0;color:#fff}
+  .part p{margin:4px 0 0;color:#cfd6df;font-size:9.5pt}
+  .pg{border:1px solid var(--line);border-radius:12px;padding:10px 12px 8px;margin-bottom:10px;break-inside:avoid}
+  .pg h3 small{font-weight:600;color:var(--muted);font-size:8.5pt;margin-left:6px}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .duo figure{margin:0}
+  .duo img{width:100%;display:block;border:1px solid var(--line);border-radius:8px}
+  .tag{display:inline-block;font-size:7.5pt;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:99px;margin-bottom:4px}
+  .tag.now{background:#eef0f3;color:var(--muted)}
+  .tag.new{background:var(--teal-soft);color:var(--teal)}
+  .chg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;font-size:8.8pt}
+  .chg ul{margin:0;padding-left:15px}
+  .chg li{margin-bottom:1px}
+  .chg .was li{color:var(--muted)}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mpg{border:1px solid var(--line);border-radius:12px;padding:9px 10px 8px;break-inside:avoid}
+  .mduo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .mduo figure{margin:0}
+  .mduo img{width:100%;display:block;border:1px solid var(--line);border-radius:10px}
+  .mpg p{font-size:8.6pt;margin:6px 0 0}
+  .mpg p b{color:var(--ink)}
   table{width:100%;border-collapse:collapse;font-size:9pt}
-  th,td{text-align:left;vertical-align:top;padding:5px 8px;border-bottom:1px solid var(--line)}
+  th,td{text-align:left;vertical-align:top;padding:3px 8px;border-bottom:1px solid var(--line)}
   th{font-size:8pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:#f7f8fa}
-  td:first-child{font-weight:700;width:22%}
-  td.now{color:var(--muted);width:36%}
+  td:first-child{font-weight:700;width:20%}
+  td.now{color:var(--muted);width:38%}
+  tr{break-inside:avoid}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .card{border:1px solid var(--line);border-radius:12px;padding:7px 12px;font-size:8.8pt;break-inside:avoid}
+  .card h3{color:var(--teal);font-size:10.5pt}
+  .card ul{margin:2px 0 0;padding-left:16px}
   ol.steps{margin:0;padding-left:18px}
-  ol.steps li{margin-bottom:5px}
-  .contact{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
-  .contact b{font-size:11pt}
-  .note{font-size:8pt;color:var(--muted);margin-top:10px}
-  .card,.shot,tr,ul.found li,.contact,.stats{break-inside:avoid}
-  h2{break-after:avoid}
-  @media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}.shots,.grid2{grid-template-columns:1fr}h1{font-size:21pt}}
+  ol.steps li{margin-bottom:3px}
+  .note{font-size:8pt;color:var(--muted);margin-top:8px}
+  @media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}.duo,.chg,.mgrid,.grid2,.toc{grid-template-columns:1fr}h1{font-size:21pt}}
   @media screen{body{padding:24px 0}}
 </style>
 </head>
 <body>
 <div class="page">
 
+<!-- ───────── COVER ───────── -->
 <header class="cover">
-  <div class="eyebrow">Website proposal</div>
+  <div class="eyebrow">New website · what changed</div>
   <h1>A new website for Praveen Hospitals</h1>
-  <p class="lead muted">Mobile-first, Telugu + English, with WhatsApp appointment booking. Built from your own content and photos, and offered <b style="color:var(--teal)">free of charge</b>.</p>
+  <p class="lead muted">Mobile-first, Telugu + English, with WhatsApp appointment booking. Built from your own content and photos. <span class="free">Free of charge</span></p>
   <div class="meta">
     <span>Prepared for <b>Dr. M. Praveen</b>, Praveen Hospitals, Vijayawada</span>
     <span>Date <b>November 2026</b></span>
     <span>Contact <b>jayachandrajarajapu@gmail.com</b></span>
   </div>
+  <div class="linkbox">
+    <div><b>See the new website</b><span class="muted">Opens on any phone or computer. No login needed.</span></div>
+    <a class="url" href="https://praveen-hospitals-preview-production.up.railway.app">praveen-hospitals-preview-production.up.railway.app</a>
+  </div>
 </header>
 
 <section>
   <h2>Your record deserves a better first impression</h2>
-  <p>Since 2007, Praveen Hospitals has built one of the strongest cardiac records in the region. Most patients now find a hospital on their phone first, so the website is often the first thing they see. Today, it doesn't reflect the quality of care behind it.</p>
+  <p>Since 2007, Praveen Hospitals has built one of the strongest cardiac records in the region. Most patients now look up a hospital on their phone first. This document shows every page of your current website next to the new one, with what changed on each page: <b>Part 1 on a computer, Part 2 on a phone</b>, Part 3 behind the scenes, and Part 4 the full comparison and next steps.</p>
   <div class="stats">
     <div class="stat"><b>11,500+</b><span>angiograms</span></div>
     <div class="stat"><b>4,000</b><span>stents · 99.6% success</span></div>
@@ -84,73 +108,178 @@
 </section>
 
 <section>
-  <h2>On a phone: today vs. the new website</h2>
-  <div class="shots">
-    <figure class="shot"><img src="../evidence/before-phone.png" alt="Current website on an iPhone"><figcaption><span class="tag now">Today</span><b>Current website</b>The welcome message is cut off at the top and bottom of the slider, and the numbers can't be tapped to call.</figcaption></figure>
-    <figure class="shot"><img src="../evidence/after-phone.png" alt="New website on an iPhone"><figcaption><span class="tag new">New</span><b>New website</b>A clear headline, a Book appointment button, and Call / WhatsApp / Book always at the bottom of the screen.</figcaption></figure>
-    <figure class="shot"><img src="../evidence/after-phone-telugu.png" alt="New website in Telugu"><figcaption><span class="tag new">New</span><b>Same page in Telugu</b>One tap switches every page between English and Telugu.</figcaption></figure>
-  </div>
-</section>
-
-<section class="break">
-  <h2>Things we noticed on the current website</h2>
-  <p class="muted">These are all quick to fix, and the new website already fixes each one.</p>
+  <h2>Problems on the current website, all fixed</h2>
   <ul class="found">
-    <li><b>Phone numbers can't be tapped.</b> None of the numbers on any page can be tapped to call, so a patient has to copy and dial them.</li>
-    <li><b>No online booking or WhatsApp.</b> The only way to book is to call.</li>
-    <li><b>The email link is broken.</b> The email address at the top of every page opens an error page.</li>
-    <li><b>The welcome message is cut off on phones</b> (see the screenshot on page 1).</li>
-    <li><b>Typos in key places.</b> "The <i>senator</i> whose foundation was laid in 2007…" (should be "centre") on Home and About, and "Radio Frequency <i>ambulation</i>" (should be "ablation") in the statistics.</li>
-    <li><b>Out-of-date details.</b> "During the last 14 years" (it's now 19), and the copyright year is missing on most pages.</li>
-    <li><b>English only.</b> There's no Telugu, although many patients come from Jaggaiahpet, Kodad and nearby towns.</li>
-    <li><b>Hard for Google to read.</b> Most pages share the same title, and Google isn't given the address, phones or 24×7 hours in a format it reads.</li>
+    <li><b>Phone numbers can't be tapped.</b> None of the numbers on any of the 8 pages can be tapped to call; patients have to copy and dial them.</li>
+    <li><b>No online booking or WhatsApp.</b> The only way to book is a phone call. The contact form sends to a server address marked "dev" (a test setup), so messages may not arrive.</li>
+    <li><b>Email link is broken.</b> The email address at the top of every page opens an error page.</li>
+    <li><b>Layout breaks on phones.</b> The welcome message is cut off, the Empanelments and Specialities titles are cut off, and the Services page is wider than the screen, so it scrolls sideways.</li>
+    <li><b>Typos in key places.</b> "The <i>senator</i> whose foundation was laid in 2007…" (should be "centre") on Home and About; "Radio Frequency <i>ambulation</i>" (should be "ablation").</li>
+    <li><b>Out-of-date details.</b> "During the last 14 years" (it's now 19) and a missing copyright year on most pages.</li>
+    <li><b>English only.</b> No Telugu, although many patients come from Jaggaiahpet, Kodad and nearby towns.</li>
+    <li><b>Hard for Google to read.</b> Most pages share one title, and Google isn't given the address, phones or 24×7 hours.</li>
   </ul>
 </section>
 
-<section>
-  <h2>What the new website does</h2>
-  <div class="grid2">
-    <div class="card"><h3>For patients</h3><ul>
-      <li>Full <b>Telugu and English</b>, switched with one tap</li>
-      <li><b>Book appointment on WhatsApp</b>: name, mobile, department</li>
-      <li>One-tap <b>Call · WhatsApp · Book</b> bar on every phone screen</li>
-      <li><b>24×7 emergency number</b> always visible</li>
-      <li>Map with one-tap <b>Google Maps directions</b></li>
-    </ul></div>
-    <div class="card"><h3>Builds trust</h3><ul>
-      <li><b>Outcome numbers</b> shown clearly on the home page</li>
-      <li><b>Dr. Praveen's credentials</b>: MD, DM (Cardiology), gold medal, NIMS</li>
-      <li>Doctors, mission, and all three centres</li>
-      <li>Photo gallery and the open-heart surgery video</li>
-      <li>Typos corrected and copy refreshed</li>
-    </ul></div>
-    <div class="card"><h3>Brings people in</h3><ul>
-      <li><b>Health camp calendar</b> that shows the next date automatically: Jaggaiahpet (Wednesdays), Kodad (2nd &amp; 4th Sundays)</li>
-      <li><b>Health checkup packages</b> with enquiries on WhatsApp</li>
-      <li><b>All 12 schemes</b> and a simple guide to cashless treatment: Aarogyasri, EHS, ECHS, all TPA insurance</li>
-    </ul></div>
-    <div class="card"><h3>Found on Google</h3><ul>
-      <li>Each page has its own title and description</li>
-      <li>Hospital details marked up for Google: address, map location, phones, 24×7 hours, specialities</li>
-      <li>Fast and lightweight on 4G</li>
-      <li>Readable for everyone: proper image descriptions and reduced motion for users who need it</li>
-    </ul></div>
-  </div>
-</section>
 
-<section class="break">
-  <h2>Side by side</h2>
+
+<!-- ───────── PART 1: WEB ───────── -->
+<div class="part break"><div class="eyebrow">Part 1</div><h2>On a computer</h2><p>Top of each page as it first appears on a laptop or desktop screen (1440 × 900). Left: today. Right: new.</p></div>
+
+<div class="pg">
+  <h3>Home</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/index-before.jpg" alt="Current home page on a computer"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/index-after.jpg" alt="New home page on a computer"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Photo slider; welcome text over the image</li><li>No booking button; numbers in the header only</li><li>Statistics as a plain list; "senator" typo</li></ul>
+    <ul><li><b>Book appointment</b>, <b>WhatsApp</b> and <b>Emergency call</b> buttons right in the first view</li><li>Health camp strip that shows the <b>next camp date</b> for Jaggaiahpet and Kodad</li><li>Statistics as cards; About text rewritten; English / తెలుగు switch</li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>About Us</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/about-before.jpg" alt="Current About page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/about-after.jpg" alt="New About page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Long paragraphs of text</li><li>Credentials buried in a paragraph</li><li>"senator" typo; "CGHS Rates 2014 Non NABH" in the opening line</li></ul>
+    <ul><li>Headline "Caring for hearts since 2007"</li><li><b>Founder profile</b>: MBBS, MD, DM (Cardiology), gold medal, formerly NIMS Hyderabad</li><li>Mission and vision cards, specialist team, and all <b>three centres</b></li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>Services</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/services-before.jpg" alt="Current Services page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/services-after.jpg" alt="New Services page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Plain bullet list of services</li><li>"During the last 14 years" (out of date)</li><li>Checkup packages only in a scrolling banner</li></ul>
+    <ul><li>Cardiology and radiology services as clear cards</li><li>Outcome numbers "since 2007"</li><li><b>Four health checkup packages</b> (General, Master, Executive, Total Body) with enquiry on WhatsApp</li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>Specialities</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/specialities-before.jpg" alt="Current Specialities page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/specialities-after.jpg" alt="New Specialities page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Five short text blocks</li><li>Some sentences don't read correctly ("Cardiothoracic surgery treatment of organs inside the thorax generally treatment of…")</li></ul>
+    <ul><li>Five speciality cards with photos: cardiology, cardiothoracic surgery, neurology, radiology, general medicine</li><li>Descriptions rewritten in plain language</li><li>"Not sure which department?" box that leads to booking</li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>Patient Care</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/patient-care-before.jpg" alt="Current Patient Care page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/patient-care-after.jpg" alt="New Patient Care page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>One long block of text mixing home care and patient rights</li></ul>
+    <ul><li>Headline "Care that continues at home"</li><li><b>Home care plans</b> explained for families</li><li><b>Patient rights</b> as a clear, easy-to-scan list</li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>Empanelments</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/empanelments-before.jpg" alt="Current Empanelments page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/empanelments-after.jpg" alt="New Empanelments page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Plain list of 12 schemes</li><li>No explanation of how cashless treatment works</li></ul>
+    <ul><li>Headline "Your scheme is welcome here"</li><li>All 12 schemes as cards: Aarogyasri, EHS, ECHS, APSRTC, BSNL, Railways, SBI, APTRANSCO, APGENCO, police, excise, all TPA insurance</li><li><b>"How cashless works" in three simple steps</b></li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>Gallery</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/gallery-before.jpg" alt="Current Gallery page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/gallery-after.jpg" alt="New Gallery page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Photo grid and a plain video player</li></ul>
+    <ul><li>Surgery video first, labelled "contains surgical footage"</li><li>Photo grid that opens each picture full screen</li></ul>
+  </div>
+</div>
+
+<div class="pg">
+  <h3>Contact Us</h3>
+  <div class="duo">
+    <figure><span class="tag now">Today</span><img src="../evidence/web/contact-before.jpg" alt="Current Contact page"></figure>
+    <figure><span class="tag new">New</span><img src="../evidence/web/contact-after.jpg" alt="New Contact page"></figure>
+  </div>
+  <div class="chg">
+    <ul class="was"><li>Form that sends to a test ("dev") server</li><li>Numbers not tappable; email link broken</li><li>Map embed from 2016 labelled "Praveen Cardiac Centre"</li></ul>
+    <ul><li><b>"Book in under a minute"</b>: name, mobile, department, sent to your front desk on WhatsApp</li><li>Tap-to-call, WhatsApp and email cards; 24×7 emergency number</li><li>Map with one-tap Google Maps directions</li></ul>
+  </div>
+</div>
+
+<!-- ───────── PART 2: MOBILE ───────── -->
+<div class="part break"><div class="eyebrow">Part 2</div><h2>On a phone</h2><p>The same 8 pages on an iPhone-size screen, as a patient first sees them. Left: today. Right: new. On every new page, Call · WhatsApp · Book stays fixed at the bottom of the screen.</p></div>
+
+<div class="mgrid">
+  <div class="mpg"><h3>Home</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/index-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/index-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> "Welcome to" is cut off at the top and the text is cut off at the bottom of the slider. <b>New:</b> headline, Book appointment and emergency number all fit.</p></div>
+  <div class="mpg"><h3>About Us</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/about-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/about-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> logo and contact block fill half the screen before any content. <b>New:</b> page content starts right away.</p></div>
+  <div class="mpg"><h3>Services</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/services-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/services-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> the page is wider than the phone (645px on a 390px screen), so it scrolls sideways. <b>New:</b> fits the screen exactly.</p></div>
+  <div class="mpg"><h3>Specialities</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/specialities-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/specialities-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> the page title runs into the background icons and is hard to read. <b>New:</b> clear headline on a clean background.</p></div>
+  <div class="mpg"><h3>Patient Care</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/patient-care-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/patient-care-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> the header and a large photo come before any useful text. <b>New:</b> headline and summary first, Call / WhatsApp / Book always in reach.</p></div>
+  <div class="mpg"><h3>Empanelments</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/empanelments-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/empanelments-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> the page title is cut off at the left ("MPANELMENTS"). <b>New:</b> full headline and scheme cards sized for a phone.</p></div>
+  <div class="mpg"><h3>Gallery</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/gallery-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/gallery-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> header block first, photos further down. <b>New:</b> headline and video sooner, photos open full screen.</p></div>
+  <div class="mpg"><h3>Contact Us</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/contact-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/contact-after.jpg" alt=""></figure></div>
+    <p><b>Today:</b> numbers can't be tapped; the form goes to a test server. <b>New:</b> one-tap call, WhatsApp booking, and directions.</p></div>
+</div>
+
+<!-- ───────── PART 3: BEHIND THE SCENES ───────── -->
+<div class="part break"><div class="eyebrow">Part 3</div><h2>Behind the scenes</h2></div>
+<div class="grid2">
+  <div class="card"><h3>Found on Google</h3><ul>
+    <li>Each page has its own title and description (today most pages share one title)</li>
+    <li>Hospital details marked up in the format Google reads: address, map location, all 3 phone numbers, 24×7 hours, specialities, procedures</li>
+  </ul></div>
+  <div class="card"><h3>Faster on 4G</h3><ul>
+    <li>Today: 5 outside code libraries from 2016, plus a 341 KB unoptimised script on the Contact page</li>
+    <li>New: one small stylesheet and one small script, no frameworks; images load as you scroll</li>
+  </ul></div>
+  <div class="card"><h3>Telugu + English</h3><ul>
+    <li>Every page, every button and every heading in both languages</li>
+    <li>One tap at the top switches the whole site</li>
+  </ul></div>
+  <div class="card"><h3>Readable for everyone</h3><ul>
+    <li>All images have descriptions for screen readers</li>
+    <li>Animation turns off for people who set "reduce motion" on their phone</li>
+    <li>Correct copyright year; typos fixed</li>
+  </ul></div>
+</div>
+
+<!-- ───────── PART 4: TABLE + NEXT STEPS ───────── -->
+<section style="margin-top:10px">
+  <div class="eyebrow">Part 4</div>
+  <h2>Full comparison</h2>
   <table>
     <thead><tr><th>Area</th><th>Current website</th><th>New website</th></tr></thead>
     <tbody>
       <tr><td>Calling</td><td class="now">Numbers shown as plain text</td><td>Every number is tap-to-call; emergency number always visible</td></tr>
-      <tr><td>Booking</td><td class="now">Phone only</td><td>WhatsApp booking form and WhatsApp buttons on every page</td></tr>
+      <tr><td>Booking</td><td class="now">Phone only; contact form goes to a test server</td><td>WhatsApp booking form and WhatsApp buttons on every page</td></tr>
       <tr><td>Language</td><td class="now">English only</td><td>Telugu + English on every page</td></tr>
-      <tr><td>Phone layout</td><td class="now">Welcome text cut off; contact details fill the first screen</td><td>Designed for phones first, with a fixed action bar</td></tr>
-      <tr><td>Outcomes</td><td class="now">Spread across pages as plain text</td><td>Clear statistic cards on the home page</td></tr>
+      <tr><td>Phone layout</td><td class="now">Cut-off titles and text; Services scrolls sideways</td><td>Designed for phones first, with a fixed Call / WhatsApp / Book bar</td></tr>
       <tr><td>Health camps</td><td class="now">Fixed text</td><td>Shows the next camp date automatically</td></tr>
       <tr><td>Schemes</td><td class="now">Plain list</td><td>All 12 schemes plus a cashless treatment guide</td></tr>
-      <tr><td>Checkups</td><td class="now">One-line notice</td><td>Package cards with WhatsApp enquiry</td></tr>
+      <tr><td>Checkups</td><td class="now">One-line scrolling notice</td><td>Package cards with WhatsApp enquiry</td></tr>
       <tr><td>Google</td><td class="now">Same title on most pages</td><td>Unique titles and descriptions, plus hospital details Google can read</td></tr>
       <tr><td>Email link</td><td class="now">Broken</td><td>Works</td></tr>
       <tr><td>Accuracy</td><td class="now">"senator", "ambulation", "14 years", missing copyright year</td><td>Corrected</td></tr>
@@ -158,18 +287,14 @@
   </table>
 </section>
 
-<section>
+<section class="end">
   <h2>Next steps</h2>
   <ol class="steps">
-    <li><b>Look at the preview</b> on your phone. The link is in my email and opens with one tap, no login needed.</li>
-    <li><b>Your team reviews</b> the Telugu text and confirms the front-desk WhatsApp number, plus checkup package details.</li>
-    <li><b>Go live on praveenhospitals.com</b> within 7–10 days of approval, keeping your existing address and email. <b>There is no cost.</b></li>
+    <li><b>Open the new website</b> on your phone: <a href="https://praveen-hospitals-preview-production.up.railway.app">praveen-hospitals-preview-production.up.railway.app</a> (no login).</li>
+    <li><b>Reply by email or WhatsApp</b> with: OK to go live, the front-desk WhatsApp number for bookings, any corrections to the Telugu text, and your checkup package details.</li>
+    <li><b>It goes live on praveenhospitals.com within 7–10 days</b>, keeping your existing address and email. <b>There is no cost.</b></li>
   </ol>
-  <div class="contact">
-    <div><b>Happy to walk you through it in 10 minutes.</b><br><span class="muted">Reply to my email and I'll call at a time that suits you.</span></div>
-    <div>jayachandrajarajapu@gmail.com</div>
-  </div>
-  <p class="note">The preview uses content and photos from the hospital's current website. It is hidden from Google and marked "preview" until you approve it.</p>
+  <p class="note">The new website uses content and photos from the hospital's current website. Until you approve it, it is hidden from Google and every page is marked "preview". Screenshots: 26 Nov 2026.</p>
 </section>
 
 </div>

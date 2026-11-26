@@ -4,6 +4,6 @@ _style.css
 __pycache__
 PITCH.md
 README.md
-CHANGES-VS-CURRENT.md
 evidence
 proposal
+deploy.sh
