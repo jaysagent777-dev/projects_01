@@ -548,3 +548,53 @@ header.scrolled .brand img{height:48px}
   .stat b{font-size:28px}
   .ebar .pulse{display:none}
 }
+
+/* ══ v3: colour system — red = brand & action, teal = calm & care, soft tints for rhythm ══ */
+:root{
+  --teal:#0e7c6b; --teal-2:#13917e; --teal-l:#eaf6f3; --mint:#f0f8f6; --blush:#fdf3f2;
+  --sp-cardio:#c62828; --sp-thoracic:#8e1c2a; --sp-neuro:#4f46e5; --sp-radio:#0e7c6b; --sp-gm:#b45309;
+}
+/* alternating section tints */
+.alt{background:linear-gradient(180deg,var(--blush) 0%,#fbeeec 100%)}
+.alt.mint{background:linear-gradient(180deg,var(--mint) 0%,#e6f3ef 100%)}
+section.mint .eyebrow,.theme-teal .eyebrow{color:var(--teal)}
+section.mint .eyebrow::before,.theme-teal .eyebrow::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 14' fill='none' stroke='%230e7c6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 7h9l3-5 4 10 3-7 2 2h11'/%3E%3C/svg%3E")}
+section.mint .head h2::after,section.mint .h2::after,.theme-teal .head h2::after,.theme-teal .h2::after{background:linear-gradient(90deg,var(--teal),#5cc4b2)}
+.theme-teal .phero .crumb a{color:var(--teal)}
+.theme-teal .ticks li::before,section.mint .ticks li::before{background:var(--teal-l);color:var(--teal)}
+.theme-teal .centre .ic,section.mint .mvcard .ic,section.mint .pk .ic{background:var(--teal-l);color:var(--teal)}
+section.mint .pk.pop{box-shadow:0 0 0 2px var(--teal),var(--sh-2)}
+section.mint .pk.pop::before{background:var(--teal)}
+section.mint .steps3 b,.theme-teal .steps3 b{background:linear-gradient(180deg,var(--teal-2),var(--teal));box-shadow:0 10px 24px -8px rgba(14,124,107,.55)}
+.callout{background:var(--teal-l);border:0;color:#0b5e52;box-shadow:inset 3px 0 0 var(--teal)}
+
+/* warmer gradients on red surfaces */
+.cta-band{background:radial-gradient(120% 140% at 100% 0%,#e0533f 0%,rgba(224,83,63,0) 55%),linear-gradient(135deg,#c62828 0%,#a81f1f 70%,#8f1b1b 100%)}
+.cs-red,.spec.cta{background:radial-gradient(120% 140% at 100% 0%,#e0533f 0%,rgba(224,83,63,0) 60%),linear-gradient(135deg,#c62828,#9e1f1f)}
+.pc-badge{background:linear-gradient(135deg,#d63333,#b62222)}
+
+/* slider: calm slides use teal accents */
+.slide.teal .eyebrow{color:var(--teal)}
+.slide.teal .eyebrow::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 14' fill='none' stroke='%230e7c6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 7h9l3-5 4 10 3-7 2 2h11'/%3E%3C/svg%3E")}
+
+/* health camps = outreach → teal calendars */
+.cs .cal .m{background:var(--teal)}
+
+/* statistics: alternate red / teal icon chips */
+.stat:nth-child(even) .st-ic{background:var(--teal-l);color:var(--teal)}
+.stat:nth-child(even) b{color:var(--teal)}
+
+/* one colour per speciality */
+.tile{--sp:var(--red)}
+.tile::after{background:linear-gradient(180deg,transparent 40%,color-mix(in srgb,var(--sp) 55%,#1c2430) 100%)}
+.tile::before{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--sp);z-index:2}
+.tile i{color:var(--sp)}
+.spec{--sp:var(--red);box-shadow:var(--sh-1),inset 0 4px 0 var(--sp)}
+.spec h3{color:var(--sp)}
+.spec li{background:color-mix(in srgb,var(--sp) 8%,#fff);border:0;color:color-mix(in srgb,var(--sp) 70%,#1f2a37)}
+.spec .ph::after{background:linear-gradient(180deg,transparent 45%,color-mix(in srgb,var(--sp) 45%,transparent))}
+.spec.cta{--sp:#fff;box-shadow:var(--sh-red)}
+.spec.cta h3{color:#fff}
+
+/* footer: brand gradient edge */
+footer{border-top:4px solid transparent;border-image:linear-gradient(90deg,var(--red),#e0533f 40%,var(--teal)) 1}

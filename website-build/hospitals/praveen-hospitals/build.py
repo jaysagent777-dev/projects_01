@@ -156,7 +156,7 @@ SLIDES = [
 ]
 CURT = ' aria-current="true"'
 SLIDER = '<section class="hero2" aria-roledescription="carousel" aria-label="Highlights"><div class="slides">' + "".join(
-    f'<div class="slide{" on" if i == 0 else ""}" role="group" aria-roledescription="slide" aria-label="{i+1} of {len(SLIDES)}" style="--img:url(\'{IMG}{img}\')">'
+    f'<div class="slide{" on" if i == 0 else ""}{" teal" if i >= 3 else ""}" role="group" aria-roledescription="slide" aria-label="{i+1} of {len(SLIDES)}" style="--img:url(\'{IMG}{img}\')">'
     f'<div class="wrap"><div class="cap"><div class="eyebrow">{eb}</div>{"<h1>" if i == 0 else "<h2>"}{title}{"</h1>" if i == 0 else "</h2>"}<p>{sub}</p><div class="ctas">{cta}</div></div></div></div>'
     for i, (img, eb, title, sub, cta) in enumerate(SLIDES)
 ) + '</div><div class="wrap s-ctrl"><button class="s-btn s-prev" aria-label="Previous slide">‹</button><div class="dots">' + "".join(
@@ -186,9 +186,10 @@ HOME_ABOUT = f"""<section><div class="wrap two-col">
 
 SPEC_TILES = [("cardiology", "Cardiology", "కార్డియాలజీ"), ("cardiothoracic", "Cardiothoracic Surgery", "కార్డియోథొరాసిక్ సర్జరీ"),
               ("neurology", "Neurology", "న్యూరాలజీ"), ("radiology", "Radiology", "రేడియాలజీ"), ("general_medicine", "General Medicine", "జనరల్ మెడిసిన్")]
+SPC = {"cardiology": "cardio", "cardiothoracic": "thoracic", "neurology": "neuro", "radiology": "radio", "general_medicine": "gm"}
 HOME_SPECS = f"""<section class="alt"><div class="wrap">
   <div class="head c reveal"><div class="eyebrow">{t("Our specialities", "మా విభాగాలు")}</div><h2>{t("Heart, brain &amp; diagnostic care.", "గుండె, మెదడు &amp; డయాగ్నొస్టిక్ వైద్యం.")}</h2></div>
-  <div class="tiles">{"".join(f'<a class="tile reveal" href="specialities.html"><img src="{IMG}speciality/{f}.jpg" alt="" loading="lazy"><span>{t(en, te)}<i>→</i></span></a>' for f, en, te in SPEC_TILES)}</div>
+  <div class="tiles">{"".join(f'<a class="tile reveal" href="specialities.html" style="--sp:var(--sp-{SPC[f]})"><img src="{IMG}speciality/{f}.jpg" alt="" loading="lazy"><span>{t(en, te)}<i>→</i></span></a>' for f, en, te in SPEC_TILES)}</div>
 </div></section>"""
 
 STATS = [
@@ -243,7 +244,7 @@ PAGES["about"] = ("About Us", page_hero(t("About Us", "మా గురించ
     <p class="muted-p">{t("Diagnostics, operating theatres and a cath-lab sit in the same building, giving patients a wide range of care without moving between centres. Dr. Praveen regularly attends national and state conferences to stay at the forefront of cardiac care.", "డయాగ్నొస్టిక్స్, ఆపరేషన్ థియేటర్లు, క్యాథ్ ల్యాబ్ ఒకే భవనంలో ఉండటం వల్ల పేషెంట్లు వేర్వేరు కేంద్రాలకు తిరగాల్సిన అవసరం లేదు. తాజా గుండె వైద్య పద్ధతుల కోసం డా. ప్రవీణ్ జాతీయ, రాష్ట్ర స్థాయి సదస్సులలో క్రమం తప్పకుండా పాల్గొంటారు.")}</p></div>
   <div class="photo reveal"><img src="{IMG}slider/banner_3.jpg" alt="Intensive care unit at Praveen Hospitals"></div>
 </div></section>
-<section class="alt"><div class="wrap mv">
+<section class="alt mint"><div class="wrap mv">
   <div class="mvcard reveal"><span class="ic">{ic(I_TARGET)}</span><div class="eyebrow">{t("Mission", "లక్ష్యం")}</div><p>{t("To provide effective, affordable, dedicated and easily accessible quality health care to the needy at any hour.", "అవసరమైన వారికి ఏ సమయంలోనైనా ప్రభావవంతమైన, అందుబాటు ధరలో, అంకితభావంతో కూడిన నాణ్యమైన వైద్యం అందించడం.")}</p></div>
   <div class="mvcard reveal"><span class="ic">{ic(I_EYE)}</span><div class="eyebrow">{t("Vision", "దృష్టి")}</div><p>{t("To reach the entire states of Andhra Pradesh and Telangana, with health education for the public and a stress on preventive care and early diagnosis.", "ఆంధ్రప్రదేశ్, తెలంగాణ రాష్ట్రాలంతటా చేరుకోవడం — ప్రజలకు ఆరోగ్య అవగాహన, ముందస్తు జాగ్రత్త మరియు త్వరిత నిర్ధారణపై దృష్టితో.")}</p></div>
 </div></section>
@@ -264,7 +265,7 @@ PAGES["services"] = ("Services", page_hero(t("Services", "సేవలు"), t("
     <h3>{t("Radiology services", "రేడియాలజీ సేవలు")}</h3>
     <ul class="ticks"><li>Ultrasound scan</li><li>Doppler</li><li>Mammography (breast cancer screening)</li></ul>
     <div class="callout">{t("Not sure which test you need? Send us your doctor's prescription on WhatsApp.", "ఏ పరీక్ష అవసరమో తెలియదా? మీ డాక్టర్ ప్రిస్క్రిప్షన్‌ను WhatsAppలో పంపండి.")}</div></div>
-</div></section>""" + P["checkups"].replace('<section id="checkups">', '<section id="checkups" class="alt">'))
+</div></section>""" + P["checkups"].replace('<section id="checkups">', '<section id="checkups" class="alt mint">'))
 
 # ── SPECIALITIES ──
 SPEC_BODY = re.sub(r'<div class="head reveal">.*?</div>\s*<div class="spec-grid">', '<div class="spec-grid">', P["specialities"], count=1, flags=re.S)
@@ -283,7 +284,7 @@ PAGES["patient-care"] = ("Patient Care", page_hero(t("Patient Care", "పేష�
     <a class="btn btn-red" href="contact.html#book">{t("Ask about home care", "ఇంటి సంరక్షణ గురించి అడగండి")} →</a></div>
   <div class="float-img reveal"><img src="{IMG}care.png" alt="" loading="lazy"></div>
 </div></section>
-<section class="alt"><div class="wrap"><div class="head c reveal"><div class="eyebrow">{t("Patient rights", "పేషెంట్ హక్కులు")}</div><h2>{t("As our patient, you can expect:", "మా పేషెంట్‌గా మీరు ఆశించవచ్చు:")}</h2></div>
+<section class="alt mint"><div class="wrap"><div class="head c reveal"><div class="eyebrow">{t("Patient rights", "పేషెంట్ హక్కులు")}</div><h2>{t("As our patient, you can expect:", "మా పేషెంట్‌గా మీరు ఆశించవచ్చు:")}</h2></div>
 <div class="rights">{"".join(f'<div class="right reveal"><span class="ok">{ic(I_CHECK, size=18)}</span><div><b>{h}</b><p>{d}</p></div></div>' for h, d in [
  (t("Informed consent", "సమాచారంతో కూడిన అంగీకారం"), t("Except in emergencies, a clear description of any procedure, its risks, the alternatives and who will perform it — before you decide.", "అత్యవసర పరిస్థితులు తప్ప, ఏ చికిత్స అయినా — దాని ప్రమాదాలు, ప్రత్యామ్నాయాలు, ఎవరు చేస్తారు — మీరు నిర్ణయించే ముందే వివరిస్తాం.")),
  (t("Clear explanations", "స్పష్టమైన వివరణ"), t("Your diagnosis, the benefits and risks of each treatment and the expected outcome, in words you understand.", "మీ వ్యాధి నిర్ధారణ, ప్రతి చికిత్స ప్రయోజనాలు, ప్రమాదాలు, ఆశించిన ఫలితం — మీకు అర్థమయ్యే మాటల్లో.")),
@@ -313,7 +314,7 @@ PAGES["empanelments"] = ("Empanelments", page_hero(t("Empanelments", "పథక�
 <section><div class="wrap">
   <div class="schemes">{"".join(f'<div class="scheme reveal"><span class="ok">{ic(I_CHECK, size=18)}</span><span><b>{n}</b><small>{t(en, te)}</small></span></div>' for n, en, te in SCHEMES)}</div>
 </div></section>
-<section class="alt"><div class="wrap">
+<section class="alt mint"><div class="wrap">
   <div class="head c reveal"><div class="eyebrow">{t("How cashless works", "క్యాష్‌లెస్ ఎలా పనిచేస్తుంది")}</div><h2>{t("Three simple steps.", "మూడు సులభమైన దశలు.")}</h2></div>
   <div class="steps3">
     <div class="reveal"><b>1</b><span>{t("Bring your scheme card or insurance policy and photo ID.", "మీ పథకం కార్డు లేదా ఇన్సూరెన్స్ పాలసీ, ఫోటో ID తీసుకురండి.")}</span></div>
@@ -636,6 +637,56 @@ header.scrolled .brand img{height:48px}
   .stat b{font-size:28px}
   .ebar .pulse{display:none}
 }
+
+/* ══ v3: colour system — red = brand & action, teal = calm & care, soft tints for rhythm ══ */
+:root{
+  --teal:#0e7c6b; --teal-2:#13917e; --teal-l:#eaf6f3; --mint:#f0f8f6; --blush:#fdf3f2;
+  --sp-cardio:#c62828; --sp-thoracic:#8e1c2a; --sp-neuro:#4f46e5; --sp-radio:#0e7c6b; --sp-gm:#b45309;
+}
+/* alternating section tints */
+.alt{background:linear-gradient(180deg,var(--blush) 0%,#fbeeec 100%)}
+.alt.mint{background:linear-gradient(180deg,var(--mint) 0%,#e6f3ef 100%)}
+section.mint .eyebrow,.theme-teal .eyebrow{color:var(--teal)}
+section.mint .eyebrow::before,.theme-teal .eyebrow::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 14' fill='none' stroke='%230e7c6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 7h9l3-5 4 10 3-7 2 2h11'/%3E%3C/svg%3E")}
+section.mint .head h2::after,section.mint .h2::after,.theme-teal .head h2::after,.theme-teal .h2::after{background:linear-gradient(90deg,var(--teal),#5cc4b2)}
+.theme-teal .phero .crumb a{color:var(--teal)}
+.theme-teal .ticks li::before,section.mint .ticks li::before{background:var(--teal-l);color:var(--teal)}
+.theme-teal .centre .ic,section.mint .mvcard .ic,section.mint .pk .ic{background:var(--teal-l);color:var(--teal)}
+section.mint .pk.pop{box-shadow:0 0 0 2px var(--teal),var(--sh-2)}
+section.mint .pk.pop::before{background:var(--teal)}
+section.mint .steps3 b,.theme-teal .steps3 b{background:linear-gradient(180deg,var(--teal-2),var(--teal));box-shadow:0 10px 24px -8px rgba(14,124,107,.55)}
+.callout{background:var(--teal-l);border:0;color:#0b5e52;box-shadow:inset 3px 0 0 var(--teal)}
+
+/* warmer gradients on red surfaces */
+.cta-band{background:radial-gradient(120% 140% at 100% 0%,#e0533f 0%,rgba(224,83,63,0) 55%),linear-gradient(135deg,#c62828 0%,#a81f1f 70%,#8f1b1b 100%)}
+.cs-red,.spec.cta{background:radial-gradient(120% 140% at 100% 0%,#e0533f 0%,rgba(224,83,63,0) 60%),linear-gradient(135deg,#c62828,#9e1f1f)}
+.pc-badge{background:linear-gradient(135deg,#d63333,#b62222)}
+
+/* slider: calm slides use teal accents */
+.slide.teal .eyebrow{color:var(--teal)}
+.slide.teal .eyebrow::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 14' fill='none' stroke='%230e7c6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 7h9l3-5 4 10 3-7 2 2h11'/%3E%3C/svg%3E")}
+
+/* health camps = outreach → teal calendars */
+.cs .cal .m{background:var(--teal)}
+
+/* statistics: alternate red / teal icon chips */
+.stat:nth-child(even) .st-ic{background:var(--teal-l);color:var(--teal)}
+.stat:nth-child(even) b{color:var(--teal)}
+
+/* one colour per speciality */
+.tile{--sp:var(--red)}
+.tile::after{background:linear-gradient(180deg,transparent 40%,color-mix(in srgb,var(--sp) 55%,#1c2430) 100%)}
+.tile::before{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--sp);z-index:2}
+.tile i{color:var(--sp)}
+.spec{--sp:var(--red);box-shadow:var(--sh-1),inset 0 4px 0 var(--sp)}
+.spec h3{color:var(--sp)}
+.spec li{background:color-mix(in srgb,var(--sp) 8%,#fff);border:0;color:color-mix(in srgb,var(--sp) 70%,#1f2a37)}
+.spec .ph::after{background:linear-gradient(180deg,transparent 45%,color-mix(in srgb,var(--sp) 45%,transparent))}
+.spec.cta{--sp:#fff;box-shadow:var(--sh-red)}
+.spec.cta h3{color:#fff}
+
+/* footer: brand gradient edge */
+footer{border-top:4px solid transparent;border-image:linear-gradient(90deg,var(--red),#e0533f 40%,var(--teal)) 1}
 """
 
 SITE_JS = r"""// Praveen Hospitals redesign preview — shared script for all pages.
@@ -796,6 +847,11 @@ def main():
     (HERE / "styles.css").write_text(style + CSS_EXTRA)
     (HERE / "site.js").write_text(SITE_JS)
     for key, (title, body) in PAGES.items():
+        if key == "specialities":
+            for f, v in SPC.items():
+                body = re.sub(r'<article class="spec( big)? reveal">(\s*<div class="ph"><img src="[^"]*speciality/' + f + r'\.jpg")',
+                              lambda m, v=v: f'<article class="spec{m.group(1) or ""} reveal" style="--sp:var(--sp-{v})">{m.group(2)}', body, count=1)
+        body_cls = ' class="theme-teal"' if key in ("patient-care", "empanelments") else ""
         html = f"""<!DOCTYPE html>
 <!-- REDESIGN PREVIEW for praveenhospitals.com — private concept, not the live site. Built by build.py. -->
 <html lang="en" data-lang="en">
@@ -807,7 +863,7 @@ def main():
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body{body_cls}>
 {header(key)}
 <main id="top">
 {body}
