@@ -1,7 +1,9 @@
-"""Password-protected static server for the Praveen Hospitals redesign preview (Railway).
+"""Static server for the Praveen Hospitals redesign preview (Railway).
 
-Why a password: this is a pitch preview of a real hospital's website. Keeping it behind a login stops
-patients from finding it and mistaking it for the real site. Set PREVIEW_PASSWORD in Railway variables.
+Public by default, so the hospital can open the link without a login. Every page carries a
+"Redesign preview — not the live website" banner, and the server sends noindex headers plus a
+Disallow-all robots.txt, so it doesn't show up on Google or get mistaken for the real site.
+To put it back behind a login, set PREVIEW_REQUIRE_LOGIN=1 and PREVIEW_PASSWORD in Railway variables.
 Only the built site files are served — never build.py, the _parts/_style sources, or this file.
 """
 import base64
@@ -13,6 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 USER = os.environ.get("PREVIEW_USER", "praveen")
 PASSWORD = os.environ.get("PREVIEW_PASSWORD", "")
+REQUIRE_LOGIN = os.environ.get("PREVIEW_REQUIRE_LOGIN", "") == "1"
 ALLOWED = {".html", ".css", ".js", ".txt"}
 PAGES = {"index", "about", "services", "specialities", "patient-care", "empanelments", "gallery", "contact"}
 
@@ -29,6 +32,8 @@ class Handler(SimpleHTTPRequestHandler):
         super().end_headers()
 
     def _authorized(self) -> bool:
+        if not REQUIRE_LOGIN:
+            return True
         if not PASSWORD:
             return False  # fail closed: never serve publicly without a password configured
         header = self.headers.get("Authorization", "")
@@ -71,6 +76,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8080"))
-    if not PASSWORD:
-        print("WARNING: PREVIEW_PASSWORD not set — every request will be refused.", flush=True)
+    if REQUIRE_LOGIN and not PASSWORD:
+        print("WARNING: PREVIEW_REQUIRE_LOGIN=1 but PREVIEW_PASSWORD not set — every request will be refused.", flush=True)
+    print("Login required." if REQUIRE_LOGIN else "Public preview (no login).", flush=True)
     ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()

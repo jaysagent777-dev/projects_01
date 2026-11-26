@@ -28,7 +28,7 @@ Goes with `PITCH.md` in this folder.
 | **Empanelments** | A plain list of 12 schemes. A commented-out heading ("Railways and CS (MA) – will be added soon") is still in the page source. | All schemes shown as cards, plus a simple guide to cashless treatment (Aarogyasri, EHS, ECHS, all TPA insurance). | Cashless treatment is a deciding factor for many families. |
 | **Health checkups** | A one-line notice: "General, Master, Executive, Total Body – Available". | Package cards, each with "ask on WhatsApp for tests and price". | Health checkups bring in repeat, non-emergency revenue. |
 | **Page titles / Google** | 7 of 8 pages have the same title, "Praveen Hospitals". Every page has the same meta description. No structured data. | Each page has its own title and its own description. Every page also carries schema.org `Hospital` structured data: address, map location, all 3 phones, 24×7 hours, specialities, procedures and founder. | Google can show the hospital correctly, with its phone, hours and map. |
-| **Welcome message on phones** | The "Welcome to Praveen Hospitals" caption is taller than the slider (232px of text in a 167px slide), so "Welcome to" is cut off at the top and the paragraph is cut off at the bottom. Screenshot: `evidence/live-mobile-welcome-cut-off.png`. | The hero headline, Book button and emergency number fit on the first screen. | The first thing a patient sees on a phone is broken. |
+| **Welcome message on phones** | The "Welcome to Praveen Hospitals" caption is taller than the slider (232px of text in a 167px slide), so "Welcome to" is cut off at the top and the paragraph is cut off at the bottom. Screenshot: `evidence/before-phone.png`. | The hero headline, Book button and emergency number fit on the first screen. | The first thing a patient sees on a phone is broken. |
 | **Map** | A 2016 Google Maps embed labelled "Praveen Cardiac Centre". | Map plus a one-tap "Open in Google Maps" button for directions. | Directions on a phone in one tap. |
 | **Gallery / video** | Photo grid and a raw `<video>` tag. | Lightbox gallery, and the surgery video is labelled "Contains surgical footage". | Looks polished and is considerate to viewers. |
 | **Speed / code** | Loads Bootstrap 3, jQuery 1.12, Font Awesome, Ionicons and animate.css from 5 CDNs. The contact page also loads the **unminified development build of Vue (341 KB)**, axios and vee-validate. | One small CSS file and one 9 KB script, with no frameworks. Images load lazily. | Faster on 4G in smaller towns. |
@@ -49,4 +49,5 @@ Goes with `PITCH.md` in this folder.
 - Telugu still needs a native-speaker review.
 - Checkup package tests and prices are placeholders.
 - Photos and video are loaded from their current server. Host them yourself before go-live.
-- `noindex`, the preview banner and the password are still on, which is correct for a preview.
+- The preview is public (no login), but `noindex` and the preview banner are still on, which is correct for a preview.
+- The offer is free: no pricing in the pitch or the PDF.
