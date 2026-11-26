@@ -1,6 +1,10 @@
 index
 about
+achievements
 specialities
 services
+doctors
+gallery
+careers
 locations
 contact
