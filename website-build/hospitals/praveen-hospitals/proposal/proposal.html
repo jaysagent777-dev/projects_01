@@ -40,7 +40,11 @@
   .part .eyebrow{color:#ffb3b3;margin:0 0 2px}
   .part h2{margin:0;color:#fff}
   .part p{margin:4px 0 0;color:#cfd6df;font-size:9.5pt}
-  .pg{border:1px solid var(--line);border-radius:12px;padding:10px 12px 8px;margin-bottom:10px;break-inside:avoid}
+  .pg{border:1px solid var(--line);border-radius:12px;padding:10px 12px 8px;margin-bottom:10px}
+  .duo,.more img,.chg,.sub{break-inside:avoid}
+  .pg + .pg{break-before:page}
+  .pg{break-inside:avoid}
+  .sub{break-after:avoid}
   .pg h3 small{font-weight:600;color:var(--muted);font-size:8.5pt;margin-left:6px}
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .duo figure{margin:0}
@@ -59,6 +63,14 @@
   .mduo img{width:100%;display:block;border:1px solid var(--line);border-radius:10px}
   .mpg p{font-size:8.6pt;margin:6px 0 0}
   .mpg p b{color:var(--ink)}
+  .sub{margin:8px 0 2px}
+  .more{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .more.one{grid-template-columns:1fr}
+  .more img{width:100%;display:block;border:1px solid var(--line);border-radius:8px}
+  .mquad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .mquad figure{margin:0}
+  .mquad img{width:100%;display:block;border:1px solid var(--line);border-radius:10px}
+  .mpg{margin-bottom:10px}
   table{width:100%;border-collapse:collapse;font-size:9pt}
   th,td{text-align:left;vertical-align:top;padding:3px 8px;border-bottom:1px solid var(--line)}
   th{font-size:8pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:#f7f8fa}
@@ -97,7 +109,7 @@
 
 <section>
   <h2>Your record deserves a better first impression</h2>
-  <p>Since 2007, Praveen Hospitals has built one of the strongest cardiac records in the region. Most patients now look up a hospital on their phone first. This document shows every page of your current website next to the new one, with what changed on each page: <b>Part 1 on a computer, Part 2 on a phone</b>, Part 3 behind the scenes, and Part 4 the full comparison and next steps.</p>
+  <p>Since 2007, Praveen Hospitals has built one of the strongest cardiac records in the region. Most patients now look up a hospital on their phone first. This document shows every page of your current website next to the new one, with more of each new page further down and what changed: <b>Part 1 on a computer, Part 2 on a phone</b>, Part 3 behind the scenes, and Part 4 the full comparison and next steps.</p>
   <div class="stats">
     <div class="stat"><b>11,500+</b><span>angiograms</span></div>
     <div class="stat"><b>4,000</b><span>stents · 99.6% success</span></div>
@@ -124,124 +136,192 @@
 
 
 <!-- ───────── PART 1: WEB ───────── -->
-<div class="part break"><div class="eyebrow">Part 1</div><h2>On a computer</h2><p>Top of each page as it first appears on a laptop or desktop screen (1440 × 900). Left: today. Right: new.</p></div>
-
+<div class="part break"><div class="eyebrow">Part 1</div><h2>On a computer</h2><p>For each page: the first screen today and new (1440 × 900), then the rest of the new page as you scroll down, and what changed.</p></div>
 <div class="pg">
   <h3>Home</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/index-before.jpg" alt="Current home page on a computer"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/index-after.jpg" alt="New home page on a computer"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/index-before.jpg" alt="Current Home page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/index-after.jpg" alt="New Home page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more"><img src="../evidence/web/index-s1.jpg" alt="Home, new, further down 1"><img src="../evidence/web/index-s2.jpg" alt="Home, new, further down 2"><img src="../evidence/web/index-s3.jpg" alt="Home, new, further down 3"><img src="../evidence/web/index-s4.jpg" alt="Home, new, further down 4"></div>
   <div class="chg">
     <ul class="was"><li>Photo slider; welcome text over the image</li><li>No booking button; numbers in the header only</li><li>Statistics as a plain list; "senator" typo</li></ul>
     <ul><li><b>Book appointment</b>, <b>WhatsApp</b> and <b>Emergency call</b> buttons right in the first view</li><li>Health camp strip that shows the <b>next camp date</b> for Jaggaiahpet and Kodad</li><li>Statistics as cards; About text rewritten; English / తెలుగు switch</li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>About Us</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/about-before.jpg" alt="Current About page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/about-after.jpg" alt="New About page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/about-before.jpg" alt="Current About Us page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/about-after.jpg" alt="New About Us page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more"><img src="../evidence/web/about-s1.jpg" alt="About Us, new, further down 1"><img src="../evidence/web/about-s2.jpg" alt="About Us, new, further down 2"><img src="../evidence/web/about-s3.jpg" alt="About Us, new, further down 3"></div>
   <div class="chg">
     <ul class="was"><li>Long paragraphs of text</li><li>Credentials buried in a paragraph</li><li>"senator" typo; "CGHS Rates 2014 Non NABH" in the opening line</li></ul>
     <ul><li>Headline "Caring for hearts since 2007"</li><li><b>Founder profile</b>: MBBS, MD, DM (Cardiology), gold medal, formerly NIMS Hyderabad</li><li>Mission and vision cards, specialist team, and all <b>three centres</b></li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>Services</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/services-before.jpg" alt="Current Services page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/services-after.jpg" alt="New Services page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/services-before.jpg" alt="Current Services page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/services-after.jpg" alt="New Services page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more"><img src="../evidence/web/services-s1.jpg" alt="Services, new, further down 1"><img src="../evidence/web/services-s2.jpg" alt="Services, new, further down 2"></div>
   <div class="chg">
     <ul class="was"><li>Plain bullet list of services</li><li>"During the last 14 years" (out of date)</li><li>Checkup packages only in a scrolling banner</li></ul>
     <ul><li>Cardiology and radiology services as clear cards</li><li>Outcome numbers "since 2007"</li><li><b>Four health checkup packages</b> (General, Master, Executive, Total Body) with enquiry on WhatsApp</li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>Specialities</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/specialities-before.jpg" alt="Current Specialities page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/specialities-after.jpg" alt="New Specialities page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/specialities-before.jpg" alt="Current Specialities page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/specialities-after.jpg" alt="New Specialities page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more one"><img src="../evidence/web/specialities-s1.jpg" alt="Specialities, new, further down 1"></div>
   <div class="chg">
     <ul class="was"><li>Five short text blocks</li><li>Some sentences don't read correctly ("Cardiothoracic surgery treatment of organs inside the thorax generally treatment of…")</li></ul>
     <ul><li>Five speciality cards with photos: cardiology, cardiothoracic surgery, neurology, radiology, general medicine</li><li>Descriptions rewritten in plain language</li><li>"Not sure which department?" box that leads to booking</li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>Patient Care</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/patient-care-before.jpg" alt="Current Patient Care page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/patient-care-after.jpg" alt="New Patient Care page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/patient-care-before.jpg" alt="Current Patient Care page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/patient-care-after.jpg" alt="New Patient Care page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more one"><img src="../evidence/web/patient-care-s1.jpg" alt="Patient Care, new, further down 1"></div>
   <div class="chg">
     <ul class="was"><li>One long block of text mixing home care and patient rights</li></ul>
     <ul><li>Headline "Care that continues at home"</li><li><b>Home care plans</b> explained for families</li><li><b>Patient rights</b> as a clear, easy-to-scan list</li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>Empanelments</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/empanelments-before.jpg" alt="Current Empanelments page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/empanelments-after.jpg" alt="New Empanelments page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/empanelments-before.jpg" alt="Current Empanelments page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/empanelments-after.jpg" alt="New Empanelments page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more one"><img src="../evidence/web/empanelments-s1.jpg" alt="Empanelments, new, further down 1"></div>
   <div class="chg">
     <ul class="was"><li>Plain list of 12 schemes</li><li>No explanation of how cashless treatment works</li></ul>
     <ul><li>Headline "Your scheme is welcome here"</li><li>All 12 schemes as cards: Aarogyasri, EHS, ECHS, APSRTC, BSNL, Railways, SBI, APTRANSCO, APGENCO, police, excise, all TPA insurance</li><li><b>"How cashless works" in three simple steps</b></li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>Gallery</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/gallery-before.jpg" alt="Current Gallery page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/gallery-after.jpg" alt="New Gallery page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/gallery-before.jpg" alt="Current Gallery page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/gallery-after.jpg" alt="New Gallery page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more"><img src="../evidence/web/gallery-s1.jpg" alt="Gallery, new, further down 1"><img src="../evidence/web/gallery-s2.jpg" alt="Gallery, new, further down 2"></div>
   <div class="chg">
     <ul class="was"><li>Photo grid and a plain video player</li></ul>
     <ul><li>Surgery video first, labelled "contains surgical footage"</li><li>Photo grid that opens each picture full screen</li></ul>
   </div>
 </div>
-
 <div class="pg">
   <h3>Contact Us</h3>
   <div class="duo">
-    <figure><span class="tag now">Today</span><img src="../evidence/web/contact-before.jpg" alt="Current Contact page"></figure>
-    <figure><span class="tag new">New</span><img src="../evidence/web/contact-after.jpg" alt="New Contact page"></figure>
+    <figure><span class="tag now">Today · first screen</span><img src="../evidence/web/contact-before.jpg" alt="Current Contact Us page"></figure>
+    <figure><span class="tag new">New · first screen</span><img src="../evidence/web/contact-after.jpg" alt="New Contact Us page"></figure>
   </div>
+  <div class="sub"><span class="tag new">New · further down the page</span></div>
+  <div class="more one"><img src="../evidence/web/contact-s1.jpg" alt="Contact Us, new, further down 1"></div>
   <div class="chg">
     <ul class="was"><li>Form that sends to a test ("dev") server</li><li>Numbers not tappable; email link broken</li><li>Map embed from 2016 labelled "Praveen Cardiac Centre"</li></ul>
     <ul><li><b>"Book in under a minute"</b>: name, mobile, department, sent to your front desk on WhatsApp</li><li>Tap-to-call, WhatsApp and email cards; 24×7 emergency number</li><li>Map with one-tap Google Maps directions</li></ul>
   </div>
 </div>
-
 <!-- ───────── PART 2: MOBILE ───────── -->
-<div class="part break"><div class="eyebrow">Part 2</div><h2>On a phone</h2><p>The same 8 pages on an iPhone-size screen, as a patient first sees them. Left: today. Right: new. On every new page, Call · WhatsApp · Book stays fixed at the bottom of the screen.</p></div>
-
-<div class="mgrid">
-  <div class="mpg"><h3>Home</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/index-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/index-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> "Welcome to" is cut off at the top and the text is cut off at the bottom of the slider. <b>New:</b> headline, Book appointment and emergency number all fit.</p></div>
-  <div class="mpg"><h3>About Us</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/about-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/about-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> logo and contact block fill half the screen before any content. <b>New:</b> page content starts right away.</p></div>
-  <div class="mpg"><h3>Services</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/services-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/services-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> the page is wider than the phone (645px on a 390px screen), so it scrolls sideways. <b>New:</b> fits the screen exactly.</p></div>
-  <div class="mpg"><h3>Specialities</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/specialities-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/specialities-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> the page title runs into the background icons and is hard to read. <b>New:</b> clear headline on a clean background.</p></div>
-  <div class="mpg"><h3>Patient Care</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/patient-care-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/patient-care-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> the header and a large photo come before any useful text. <b>New:</b> headline and summary first, Call / WhatsApp / Book always in reach.</p></div>
-  <div class="mpg"><h3>Empanelments</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/empanelments-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/empanelments-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> the page title is cut off at the left ("MPANELMENTS"). <b>New:</b> full headline and scheme cards sized for a phone.</p></div>
-  <div class="mpg"><h3>Gallery</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/gallery-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/gallery-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> header block first, photos further down. <b>New:</b> headline and video sooner, photos open full screen.</p></div>
-  <div class="mpg"><h3>Contact Us</h3><div class="mduo"><figure><span class="tag now">Today</span><img src="../evidence/mobile/contact-before.jpg" alt=""></figure><figure><span class="tag new">New</span><img src="../evidence/mobile/contact-after.jpg" alt=""></figure></div>
-    <p><b>Today:</b> numbers can't be tapped; the form goes to a test server. <b>New:</b> one-tap call, WhatsApp booking, and directions.</p></div>
+<div class="part break"><div class="eyebrow">Part 2</div><h2>On a phone</h2><p>For each page: the first screen today, then three screens of the new page as a patient scrolls down (iPhone size). Call · WhatsApp · Book stays fixed at the bottom on every new page.</p></div>
+<div class="mpg">
+  <h3>Home</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/index-before.jpg" alt="Current Home on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/index-after.jpg" alt="New Home on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/index-after2.jpg" alt="New Home on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/index-after3.jpg" alt="New Home on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> "Welcome to" is cut off at the top and the text is cut off at the bottom of the slider. <b>New:</b> headline, Book appointment and emergency number all fit.</p>
+</div>
+<div class="mpg">
+  <h3>About Us</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/about-before.jpg" alt="Current About Us on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/about-after.jpg" alt="New About Us on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/about-after2.jpg" alt="New About Us on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/about-after3.jpg" alt="New About Us on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> logo and contact block fill half the screen before any content. <b>New:</b> page content starts right away.</p>
+</div>
+<div class="mpg">
+  <h3>Services</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/services-before.jpg" alt="Current Services on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/services-after.jpg" alt="New Services on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/services-after2.jpg" alt="New Services on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/services-after3.jpg" alt="New Services on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> the page is wider than the phone (645px on a 390px screen), so it scrolls sideways. <b>New:</b> fits the screen exactly.</p>
+</div>
+<div class="mpg">
+  <h3>Specialities</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/specialities-before.jpg" alt="Current Specialities on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/specialities-after.jpg" alt="New Specialities on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/specialities-after2.jpg" alt="New Specialities on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/specialities-after3.jpg" alt="New Specialities on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> the page title runs into the background icons and is hard to read. <b>New:</b> clear headline on a clean background.</p>
+</div>
+<div class="mpg">
+  <h3>Patient Care</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/patient-care-before.jpg" alt="Current Patient Care on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/patient-care-after.jpg" alt="New Patient Care on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/patient-care-after2.jpg" alt="New Patient Care on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/patient-care-after3.jpg" alt="New Patient Care on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> the header and a large photo come before any useful text. <b>New:</b> headline and summary first, Call / WhatsApp / Book always in reach.</p>
+</div>
+<div class="mpg">
+  <h3>Empanelments</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/empanelments-before.jpg" alt="Current Empanelments on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/empanelments-after.jpg" alt="New Empanelments on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/empanelments-after2.jpg" alt="New Empanelments on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/empanelments-after3.jpg" alt="New Empanelments on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> the page title is cut off at the left ("MPANELMENTS"). <b>New:</b> full headline and scheme cards sized for a phone.</p>
+</div>
+<div class="mpg">
+  <h3>Gallery</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/gallery-before.jpg" alt="Current Gallery on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/gallery-after.jpg" alt="New Gallery on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/gallery-after2.jpg" alt="New Gallery on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/gallery-after3.jpg" alt="New Gallery on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> header block first, photos further down. <b>New:</b> headline and video sooner, photos open full screen.</p>
+</div>
+<div class="mpg">
+  <h3>Contact Us</h3>
+  <div class="mquad">
+    <figure><span class="tag now">Today</span><img src="../evidence/mobile/contact-before.jpg" alt="Current Contact Us on a phone"></figure>
+    <figure><span class="tag new">New · top</span><img src="../evidence/mobile/contact-after.jpg" alt="New Contact Us on a phone, top"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/contact-after2.jpg" alt="New Contact Us on a phone, scrolled"></figure>
+    <figure><span class="tag new">New · scroll</span><img src="../evidence/mobile/contact-after3.jpg" alt="New Contact Us on a phone, scrolled further"></figure>
+  </div>
+  <p><b>Today:</b> numbers can't be tapped; the form goes to a test server. <b>New:</b> one-tap call, WhatsApp booking, and directions.</p>
 </div>
 
 <!-- ───────── PART 3: BEHIND THE SCENES ───────── -->
