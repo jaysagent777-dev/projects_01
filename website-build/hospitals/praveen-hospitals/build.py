@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Builds the Praveen Hospitals redesign preview: 8 static pages sharing one header, footer, CSS and JS.
 
 Run:  python3 build.py
@@ -29,6 +30,12 @@ I_BODY = '<circle cx="12" cy="5" r="2.5"/><path d="M12 8v7M8 10h8M9 22l3-7 3 7"/
 I_TARGET = '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'
 I_EYE = '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'
 I_CHECK = '<path d="M20 6 9 17l-5-5"/>'
+I_BED = '<path d="M2 18v-8M2 14h20v4M22 18v-4a3 3 0 0 0-3-3h-9v3"/><circle cx="6.5" cy="11.5" r="1.5"/>'
+I_ACT = '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'
+I_ZAP = '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'
+I_DROP = '<path d="M12 2.7s6 6.4 6 11.3a6 6 0 0 1-12 0c0-4.9 6-11.3 6-11.3z"/>'
+I_VESSEL = '<path d="M4 20c4-4 4-12 8-12s4 8 8 12"/><path d="M4 4c3 3 13 3 16 0"/>'
+I_STENT = '<rect x="3" y="9" width="18" height="6" rx="3"/><path d="M7 9l3 6M11 9l3 6M15 9l3 6"/>'
 
 def t(en, te):
     return f'<span lang="en">{en}</span><span lang="te">{te}</span>'
@@ -69,8 +76,9 @@ def header(active):
     )
     return f"""<div class="preview"><b>Redesign preview</b> — prepared for Praveen Hospitals. Not the live website.</div>
 <div class="ebar"><div class="wrap">
-  <span class="pulse"><i></i>{t("24×7 Emergency &amp; Cardiac Care", "24×7 అత్యవసర &amp; గుండె వైద్య సేవలు")}</span>
-  <span style="display:flex;align-items:center;gap:16px">
+  <span class="pulse"><i></i>{t("24×7 Emergency", "24×7 అత్యవసరం")}</span>
+  <div class="ticker" aria-label="Announcements"><div class="tk-track"><span>{t("For appointments call 0866-2444440", "అపాయింట్‌మెంట్ల కోసం 0866-2444440కి కాల్ చేయండి")} <b>•</b> {t("Health checkup packages available: General, Master, Executive, Total Body", "హెల్త్ చెకప్ ప్యాకేజీలు అందుబాటులో: జనరల్, మాస్టర్, ఎగ్జిక్యూటివ్, టోటల్ బాడీ")} <b>•</b> </span><span aria-hidden="true">{t("For appointments call 0866-2444440", "అపాయింట్‌మెంట్ల కోసం 0866-2444440కి కాల్ చేయండి")} <b>•</b> {t("Health checkup packages available: General, Master, Executive, Total Body", "హెల్త్ చెకప్ ప్యాకేజీలు అందుబాటులో: జనరల్, మాస్టర్, ఎగ్జిక్యూటివ్, టోటల్ బాడీ")} <b>•</b> </span></div></div>
+  <span class="ebar-r">
     <a class="hide-s" href="tel:+918662444440">0866-2444440</a>
     <span class="lang" role="group" aria-label="Language"><button data-set="en" aria-pressed="true">English</button><button data-set="te" class="te" aria-pressed="false">తెలుగు</button></span>
   </span>
@@ -105,6 +113,8 @@ FOOTER = f"""<footer>
   <a class="w" href="contact.html#book">{ic(I_WA, fill=True, size=20)}<span>WhatsApp</span></a>
   <a class="b" href="contact.html#book">{ic(I_CAL, size=20)}<span>{t("Book", "బుక్")}</span></a>
 </nav>
+<a class="fab-wa" href="contact.html#book" aria-label="Book on WhatsApp">{ic(I_WA, fill=True, size=28)}<span>{t("Book on WhatsApp", "WhatsAppలో బుక్")}</span></a>
+<button class="to-top" aria-label="Back to top">↑</button>
 {P["modal"]}"""
 
 def page_hero(eyebrow, title, sub, img="slider/banner_3.jpg"):
@@ -121,54 +131,116 @@ VIDEO = f"""<div class="video-card">
   <div class="vc-cap"><b>{t("Open heart surgery at Praveen Hospitals", "ప్రవీణ్ హాస్పిటల్స్‌లో ఓపెన్ హార్ట్ సర్జరీ")}</b><small>{t("Contains surgical footage", "శస్త్రచికిత్స దృశ్యాలు ఉన్నాయి")}</small></div>
 </div>"""
 
-STATS = [
-    ("monthly_in_patients", "150–200", "Monthly in-patients", "నెలవారీ ఇన్-పేషెంట్లు"),
-    ("angiographies", "100–120", "Angiographies every month", "ప్రతి నెలా యాంజియోగ్రఫీలు"),
-    ("cardiac_peripheral_intervention", "3,800", "Cardiac & peripheral interventions", "కార్డియాక్ & పెరిఫెరల్ ఇంటర్వెన్షన్లు"),
-    ("open_heart_surgery", "2,000", "Open heart surgeries", "ఓపెన్ హార్ట్ సర్జరీలు"),
-    ("permanent_pacemaker", "180", "Permanent pacemakers", "పర్మనెంట్ పేస్‌మేకర్లు"),
-    ("peripheral_vascular_surgery", "3,500", "Peripheral vascular surgeries", "పెరిఫెరల్ వాస్కులర్ సర్జరీలు"),
-    ("av_fistula", "200", "AV fistulas for hemodialysis", "హీమోడయాలసిస్ కోసం AV ఫిస్టులా"),
-    ("cardiac_electrophysiology", "250", "Cardiac EP & RF ablation", "కార్డియాక్ EP & RF అబ్లేషన్"),
-]
-STATS_HTML = '<div class="stats">' + "".join(
-    f'<div class="stat reveal"><img src="{IMG}statistics/{f}.jpg" alt="" loading="lazy"><b>{n}</b><span>{t(en, te)}</span></div>' for f, n, en, te in STATS
-) + "</div>"
-
-VIDEO_SECTION = f"""<section class="alt"><div class="wrap two-col">
-  <div class="reveal"><div class="eyebrow">{t("Watch", "చూడండి")}</div>
-    <h2 class="h2">{t("Expert surgeons. Modular operating theatres.", "నిపుణులైన సర్జన్లు. మాడ్యులర్ ఆపరేషన్ థియేటర్లు.")}</h2>
-    <p class="lede">{t("2,000+ open heart surgeries with a 98% success rate — performed right here in Vijayawada.", "98% విజయ శాతంతో 2,000కు పైగా ఓపెన్ హార్ట్ సర్జరీలు — ఇక్కడే విజయవాడలో.")}</p>
-    <a class="btn btn-red" href="gallery.html">{t("See the gallery", "గ్యాలరీ చూడండి")} →</a></div>
-  <div class="reveal">{VIDEO}</div>
-</div></section>"""
-
-CONTACT_STRIP = f"""<section><div class="wrap two-col">
-  <div class="reveal"><div class="eyebrow">{t("Find us", "మా చిరునామా")}</div>
-    <h2 class="h2">{t("Moghalrajapuram, on the No.5 bus route.", "మొగల్రాజపురం, నెం.5 బస్ రూట్‌లో.")}</h2>
-    <p class="lede">#32-9-18, Moghalrajapuram, Madhugarden Center, Vijayawada – 520 010</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-red" href="tel:+918662444440">{PHONE_SVG}0866-2444440</a><a class="btn btn-line" href="contact.html">{t("All contact details", "పూర్తి వివరాలు")}</a></div></div>
-  <div class="reveal">{MAP}</div>
-</div></section>"""
-
 # The contact page form section, with the blocked Google iframe swapped for the OSM map
 BOOK = re.sub(r'<div class="map">.*?</div>', MAP, P["book"], flags=re.S)
 
-# Home: keep the full-page specialities/doctor sections lighter by linking onwards
-SPEC_TEASER = P["specialities"].replace('<section id="specialities">', '<section id="specialities">').replace(
-    "</div>\n  </div>\n</section>", f'</div>\n    <p style="text-align:center;margin-top:28px"><a class="btn btn-line" href="specialities.html">{t("All specialities", "అన్ని విభాగాలు")} →</a></p>\n  </div>\n</section>', 1)
-
 PAGES = {}
 
-PAGES["index"] = ("Home", P["hero"] + P["outcomes"] + SPEC_TEASER + P["doctors"] + P["checkups"] + P["camps"] + VIDEO_SECTION + P["insurance"] + CONTACT_STRIP)
+# ── HOME — same order as the original homepage: slider → camps → about → specialities → statistics → core services ──
+SLIDES = [
+    ("slider/banner_5.jpg", t("Welcome to", "స్వాగతం"), t("Praveen Hospitals", "ప్రవీణ్ హాస్పిటల్స్"),
+     t("Effective, affordable, dedicated and easily accessible quality health care to the needy — at any hour.", "అవసరమైన వారికి ఏ సమయంలోనైనా ప్రభావవంతమైన, అందుబాటు ధరలో, అంకితభావంతో కూడిన నాణ్యమైన వైద్యం."),
+     f'<a class="btn btn-red" href="contact.html#book">{t("Book appointment", "అపాయింట్‌మెంట్ బుక్ చేయండి")} →</a><a class="btn btn-white" href="tel:+918662444440">{PHONE_SVG}{t("Emergency 0866-2444440", "అత్యవసరం 0866-2444440")}</a>'),
+    ("slider/banner_3.jpg", t("100-bed hospital", "100 పడకల ఆసుపత్రి"), t("Latest ICU. Modular operating theatres.", "ఆధునిక ICU. మాడ్యులర్ ఆపరేషన్ థియేటర్లు."),
+     t("Cath-lab, diagnostics and theatres in one building — so treatment starts faster.", "క్యాథ్ ల్యాబ్, డయాగ్నొస్టిక్స్, థియేటర్లు — అన్నీ ఒకే భవనంలో, చికిత్స త్వరగా మొదలవుతుంది."),
+     f'<a class="btn btn-red" href="services.html">{t("Our services", "మా సేవలు")} →</a>'),
+    ("slider/banner_2.jpg", t("Heart care since 2007", "2007 నుండి గుండె వైద్యం"), t("11,500+ angiograms. 99.6% stent success.", "11,500+ యాంజియోగ్రామ్‌లు. 99.6% స్టెంట్ విజయం."),
+     t("4,000 stents and 2,000 bypass surgeries in 14 years, as reported by the hospital.", "14 సంవత్సరాలలో 4,000 స్టెంట్లు, 2,000 బైపాస్ సర్జరీలు — ఆసుపత్రి నివేదిక ప్రకారం."),
+     f'<a class="btn btn-red" href="specialities.html">{t("Our specialities", "మా విభాగాలు")} →</a>'),
+    ("slider/banner_1.jpg", t("Cashless treatment", "క్యాష్‌లెస్ చికిత్స"), t("Aarogyasri, EHS, ECHS &amp; all TPA insurance.", "ఆరోగ్యశ్రీ, EHS, ECHS &amp; అన్ని TPA ఇన్సూరెన్స్‌లు."),
+     t("Treatment at CGHS rates under 12 government schemes and insurers.", "12 ప్రభుత్వ పథకాలు, ఇన్సూరెన్స్‌లతో CGHS ధరలకే చికిత్స."),
+     f'<a class="btn btn-red" href="empanelments.html">{t("Check your scheme", "మీ పథకం చూడండి")} →</a>'),
+    ("slider/banner_4.jpg", t("Patient care", "పేషెంట్ కేర్"), t("Recovery that continues at home.", "ఇంటి వరకూ కొనసాగే సంరక్షణ."),
+     t("Home-care plans for elderly, chronically ill and post-surgery patients.", "వృద్ధులు, దీర్ఘకాల వ్యాధిగ్రస్తులు, శస్త్రచికిత్స తర్వాత కోలుకునే వారికి ఇంటి సంరక్షణ ప్రణాళికలు."),
+     f'<a class="btn btn-red" href="patient-care.html">{t("Patient care", "పేషెంట్ కేర్")} →</a>'),
+]
+CURT = ' aria-current="true"'
+SLIDER = '<section class="hero2" aria-roledescription="carousel" aria-label="Highlights"><div class="slides">' + "".join(
+    f'<div class="slide{" on" if i == 0 else ""}" role="group" aria-roledescription="slide" aria-label="{i+1} of {len(SLIDES)}" style="--img:url(\'{IMG}{img}\')">'
+    f'<div class="wrap"><div class="cap"><div class="eyebrow">{eb}</div>{"<h1>" if i == 0 else "<h2>"}{title}{"</h1>" if i == 0 else "</h2>"}<p>{sub}</p><div class="ctas">{cta}</div></div></div></div>'
+    for i, (img, eb, title, sub, cta) in enumerate(SLIDES)
+) + '</div><div class="wrap s-ctrl"><button class="s-btn s-prev" aria-label="Previous slide">‹</button><div class="dots">' + "".join(
+    f'<button aria-label="Go to slide {i+1}"{CURT if i == 0 else ""}></button>' for i in range(len(SLIDES))
+) + '</div><button class="s-btn s-next" aria-label="Next slide">›</button></div></section>'
 
+CAMP_STRIP = f"""<div class="wrap camp-strip">
+  <div class="cs reveal"><div class="cal" id="cal-j"><div class="m">—</div><div class="d">—</div><div class="w">—</div></div>
+    <div><b>{t("Health camp · Jaggaiahpet", "ఆరోగ్య శిబిరం · జగ్గయ్యపేట")}</b><span>{t("Every Wednesday · 4 PM – 8 PM", "ప్రతి బుధవారం · సా. 4 – రా. 8")}</span><em class="next" id="next-j"></em></div></div>
+  <div class="cs reveal"><div class="cal" id="cal-k"><div class="m">—</div><div class="d">—</div><div class="w">—</div></div>
+    <div><b>{t("Health camp · Kodad", "ఆరోగ్య శిబిరం · కోదాడ")}</b><span>{t("2nd &amp; 4th Sunday · 11 AM – 2 PM", "2వ &amp; 4వ ఆదివారం · ఉ. 11 – మ. 2")}</span><em class="next" id="next-k"></em></div></div>
+  <a class="cs cs-red reveal" href="tel:+918662444440"><span class="cs-ic">{ic(I_PHONE, size=26)}</span>
+    <div><b>{t("24×7 Emergency", "24×7 అత్యవసరం")}</b><span class="big">0866-2444440</span></div></a>
+</div>"""
+
+HOME_ABOUT = f"""<section><div class="wrap two-col">
+  <div class="portrait-card reveal">
+    <img src="{IMG}doctor_m_praveen.jpg" alt="Dr. M. Praveen, Cardiologist">
+    <div class="pc-badge"><b>2007</b><span>{t("Founded", "స్థాపన")}</span></div>
+    <div class="pc-name"><b>Dr. M. Praveen</b><small>MD, DM (Cardiology)</small></div>
+  </div>
+  <div class="reveal"><div class="eyebrow">{t("About Praveen Hospitals", "ప్రవీణ్ హాస్పిటల్స్ గురించి")}</div>
+    <h2 class="h2">{t("A cardiac centre built on one doctor's promise.", "ఒక వైద్యుని సంకల్పంతో నిర్మించిన గుండె వైద్య కేంద్రం.")}</h2>
+    <p class="lede">{t("Dr. Praveen Maddirala, an established cardiologist, founded the Praveen Cardiac Centre in Vijayawada in 2007. Today it is a 100-bed hospital with cardiology, neurology, critical care, radiology and anaesthesiology — all under one roof.", "ప్రముఖ కార్డియాలజిస్ట్ డా. ప్రవీణ్ మద్దిరాల 2007లో విజయవాడలో ప్రవీణ్ కార్డియాక్ సెంటర్‌ను స్థాపించారు. నేడు ఇది కార్డియాలజీ, న్యూరాలజీ, క్రిటికల్ కేర్, రేడియాలజీ, అనస్థీషియాలజీ సేవలతో 100 పడకల ఆసుపత్రి — అన్నీ ఒకే చోట.")}</p>
+    <a class="btn btn-red" href="about.html">{t("Read more", "మరింత చదవండి")} →</a></div>
+</div></section>"""
+
+SPEC_TILES = [("cardiology", "Cardiology", "కార్డియాలజీ"), ("cardiothoracic", "Cardiothoracic Surgery", "కార్డియోథొరాసిక్ సర్జరీ"),
+              ("neurology", "Neurology", "న్యూరాలజీ"), ("radiology", "Radiology", "రేడియాలజీ"), ("general_medicine", "General Medicine", "జనరల్ మెడిసిన్")]
+HOME_SPECS = f"""<section class="alt"><div class="wrap">
+  <div class="head c reveal"><div class="eyebrow">{t("Our specialities", "మా విభాగాలు")}</div><h2>{t("Heart, brain &amp; diagnostic care.", "గుండె, మెదడు &amp; డయాగ్నొస్టిక్ వైద్యం.")}</h2></div>
+  <div class="tiles">{"".join(f'<a class="tile reveal" href="specialities.html"><img src="{IMG}speciality/{f}.jpg" alt="" loading="lazy"><span>{t(en, te)}<i>→</i></span></a>' for f, en, te in SPEC_TILES)}</div>
+</div></section>"""
+
+STATS = [
+    ("monthly_in_patients", "150–200", None, "Monthly in-patients", "నెలవారీ ఇన్-పేషెంట్లు"),
+    ("angiographies", "100–120", None, "Angiographies every month", "ప్రతి నెలా యాంజియోగ్రఫీలు"),
+    ("cardiac_peripheral_intervention", "3,800", 3800, "Cardiac &amp; peripheral interventions", "కార్డియాక్ &amp; పెరిఫెరల్ ఇంటర్వెన్షన్లు"),
+    ("open_heart_surgery", "2,000", 2000, "Open heart surgeries", "ఓపెన్ హార్ట్ సర్జరీలు"),
+    ("permanent_pacemaker", "180", 180, "Permanent pacemakers", "పర్మనెంట్ పేస్‌మేకర్లు"),
+    ("peripheral_vascular_surgery", "3,500", 3500, "Peripheral vascular surgeries", "పెరిఫెరల్ వాస్కులర్ సర్జరీలు"),
+    ("av_fistula", "200", 200, "AV fistulas for hemodialysis", "హీమోడయాలసిస్ కోసం AV ఫిస్టులా"),
+    ("cardiac_electrophysiology", "250", 250, "Cardiac EP &amp; RF ablation", "కార్డియాక్ EP &amp; RF అబ్లేషన్"),
+]
+STAT_ICON = {"monthly_in_patients": I_BED, "angiographies": I_ACT, "cardiac_peripheral_intervention": I_STENT, "open_heart_surgery": I_HEART,
+             "permanent_pacemaker": I_ZAP, "peripheral_vascular_surgery": I_VESSEL, "av_fistula": I_DROP, "cardiac_electrophysiology": I_PULSE}
+def stat_card(f, shown, n, en, te):
+    num = f'<b class="count" data-to="{n}">{shown}</b>' if n else f'<b>{shown}</b>'
+    return f'<div class="stat reveal"><span class="st-ic">{ic(STAT_ICON[f], size=26)}</span>{num}<span>{t(en, te)}</span></div>'
+STAT_CARDS = "".join(stat_card(*row) for row in STATS)
+HOME_STATS = f"""<section><div class="wrap">
+  <div class="head c reveal"><div class="eyebrow">{t("Hospital statistics", "ఆసుపత్రి గణాంకాలు")}</div><h2>{t("Experience you can count on.", "లెక్కించదగిన అనుభవం.")}</h2></div>
+  <div class="stats">{STAT_CARDS}</div>
+  <p class="note" style="text-align:center">{t("Figures as reported by Praveen Hospitals.", "ప్రవీణ్ హాస్పిటల్స్ నివేదించిన గణాంకాలు.")}</p>
+</div></section>"""
+
+HOME_CORE = f"""<section class="alt"><div class="wrap two-col">
+  <div class="reveal"><div class="eyebrow">{t("Core services", "ప్రధాన సేవలు")}</div>
+    <h2 class="h2">{t("Cardiology services", "కార్డియాలజీ సేవలు")}</h2>
+    <p class="lede">{t("From a first ECG to bypass and valve surgery, our cardiologists cover the whole journey — PTCA, pacemakers, EP studies and more.", "మొదటి ECG నుండి బైపాస్, వాల్వ్ సర్జరీ వరకు — PTCA, పేస్‌మేకర్లు, EP స్టడీలు మరియు మరెన్నో — మా కార్డియాలజిస్టులు అన్నీ చూసుకుంటారు.")}</p>
+    <a class="btn btn-red" href="services.html">{t("Read more", "మరింత చదవండి")} →</a></div>
+  <div class="float-img reveal"><img src="{IMG}cardiology_services.png" alt="" loading="lazy"></div>
+</div></section>"""
+
+CTA_BAND = f"""<section class="tight"><div class="wrap"><div class="cta-band reveal">
+  <div><h2>{t("Need a heart specialist?", "గుండె నిపుణుడు కావాలా?")}</h2><p>{t("Book in a minute on WhatsApp, or call us any time — day or night.", "WhatsAppలో నిమిషంలో బుక్ చేయండి, లేదా పగలు రాత్రి ఎప్పుడైనా కాల్ చేయండి.")}</p></div>
+  <div class="cta-acts"><a class="btn btn-white" href="contact.html#book">{t("Book appointment", "అపాయింట్‌మెంట్ బుక్ చేయండి")} →</a><a class="btn btn-ghost-w" href="tel:+918662444440">{PHONE_SVG}0866-2444440</a></div>
+</div></div></section>"""
+
+PAGES["index"] = ("Home", SLIDER + CAMP_STRIP + HOME_ABOUT + HOME_SPECS + HOME_STATS + HOME_CORE + CTA_BAND)
+
+# ── ABOUT ──
+CENTRES = [
+    (t("Main hospital", "ప్రధాన ఆసుపత్రి"), "Moghalrajapuram, Vijayawada", t("100 beds · ICU · cath-lab · modular OT", "100 పడకలు · ICU · క్యాథ్ ల్యాబ్ · మాడ్యులర్ OT")),
+    (t("Hyderabad Road centre", "హైదరాబాద్ రోడ్ కేంద్రం"), "Vijayawada", t("Consultations with Dr. Praveen", "డా. ప్రవీణ్ సంప్రదింపులు")),
+    (t("Huzurnagar Road centre", "హుజూర్‌నగర్ రోడ్ కేంద్రం"), "Vijayawada", t("Consultations with Dr. Praveen", "డా. ప్రవీణ్ సంప్రదింపులు")),
+]
 PAGES["about"] = ("About Us", page_hero(t("About Us", "మా గురించి"), t("Caring for hearts since 2007.", "2007 నుండి గుండెలకు ఆదరణ."),
-    t("A cardiac centre founded by Dr. M. Praveen — today a 100-bed hospital for cardiology, cardiothoracic surgery, neurology and neurosurgery.", "డా. ఎం. ప్రవీణ్ స్థాపించిన కార్డియాక్ సెంటర్ — నేడు కార్డియాలజీ, కార్డియోథొరాసిక్ సర్జరీ, న్యూరాలజీ, న్యూరోసర్జరీ కోసం 100 పడకల ఆసుపత్రి."), "slider/banner_5.jpg") + f"""
+    t("From a cardiac centre to a 100-bed hospital for cardiology, cardiothoracic surgery, neurology and neurosurgery.", "ఒక కార్డియాక్ సెంటర్ నుండి కార్డియాలజీ, కార్డియోథొరాసిక్ సర్జరీ, న్యూరాలజీ, న్యూరోసర్జరీ కోసం 100 పడకల ఆసుపత్రిగా."), "slider/banner_5.jpg") + f"""
 <section><div class="wrap two-col">
   <div class="reveal"><div class="eyebrow">{t("Who we are", "మేము ఎవరం")}</div>
     <h2 class="h2">{t("Everything under one roof.", "అన్నీ ఒకే చోట.")}</h2>
     <p class="lede">{t("We provide consultation, diagnosis and treatment in Cardiology, Cardiothoracic Surgery, Neurology and Neuro Surgery at CGHS rates.", "కార్డియాలజీ, కార్డియోథొరాసిక్ సర్జరీ, న్యూరాలజీ, న్యూరోసర్జరీలో సంప్రదింపులు, నిర్ధారణ, చికిత్స — CGHS ధరలకే.")}</p>
-    <p class="muted-p">{t("Founded in 2007, the centre has state-of-the-art facilities in Cardiology &amp; Neurology, Critical Care, Radiology and Anesthesiology, with diagnostics, operating theatres and a cath-lab in the same building.", "2007లో ప్రారంభమైన ఈ కేంద్రంలో కార్డియాలజీ &amp; న్యూరాలజీ, క్రిటికల్ కేర్, రేడియాలజీ, అనస్థీషియాలజీలో అత్యాధునిక సదుపాయాలు ఉన్నాయి — డయాగ్నొస్టిక్స్, ఆపరేషన్ థియేటర్లు, క్యాథ్ ల్యాబ్ అన్నీ ఒకే భవనంలో.")}</p></div>
+    <p class="muted-p">{t("Diagnostics, operating theatres and a cath-lab sit in the same building, giving patients a wide range of care without moving between centres. Dr. Praveen regularly attends national and state conferences to stay at the forefront of cardiac care.", "డయాగ్నొస్టిక్స్, ఆపరేషన్ థియేటర్లు, క్యాథ్ ల్యాబ్ ఒకే భవనంలో ఉండటం వల్ల పేషెంట్లు వేర్వేరు కేంద్రాలకు తిరగాల్సిన అవసరం లేదు. తాజా గుండె వైద్య పద్ధతుల కోసం డా. ప్రవీణ్ జాతీయ, రాష్ట్ర స్థాయి సదస్సులలో క్రమం తప్పకుండా పాల్గొంటారు.")}</p></div>
   <div class="photo reveal"><img src="{IMG}slider/banner_3.jpg" alt="Intensive care unit at Praveen Hospitals"></div>
 </div></section>
 <section class="alt"><div class="wrap mv">
@@ -176,21 +248,15 @@ PAGES["about"] = ("About Us", page_hero(t("About Us", "మా గురించ
   <div class="mvcard reveal"><span class="ic">{ic(I_EYE)}</span><div class="eyebrow">{t("Vision", "దృష్టి")}</div><p>{t("To reach the entire states of Andhra Pradesh and Telangana, with health education for the public and a stress on preventive care and early diagnosis.", "ఆంధ్రప్రదేశ్, తెలంగాణ రాష్ట్రాలంతటా చేరుకోవడం — ప్రజలకు ఆరోగ్య అవగాహన, ముందస్తు జాగ్రత్త మరియు త్వరిత నిర్ధారణపై దృష్టితో.")}</p></div>
 </div></section>
 """ + P["doctors"].replace('<section id="doctors" class="alt">', '<section id="doctors">') + f"""
-<section class="alt"><div class="wrap two-col">
-  <div class="reveal"><div class="eyebrow">{t("Beyond Vijayawada", "విజయవాడ దాటి")}</div>
-    <h2 class="h2">{t("Three centres, one standard of care.", "మూడు కేంద్రాలు, ఒకే నాణ్యత.")}</h2>
-    <p class="lede">{t("Besides this hospital, Dr. Praveen also practises at centres on Hyderabad Road and Huzurnagar Road, and our team runs regular health camps in Jaggaiahpet and Kodad.", "ఈ ఆసుపత్రితో పాటు డా. ప్రవీణ్ హైదరాబాద్ రోడ్, హుజూర్‌నగర్ రోడ్‌లోని కేంద్రాలలో కూడా వైద్యం చేస్తారు. జగ్గయ్యపేట, కోదాడలో మా బృందం క్రమం తప్పకుండా ఆరోగ్య శిబిరాలు నిర్వహిస్తుంది.")}</p></div>
-  <div class="reveal">{STATS_HTML.replace('class="stats"', 'class="stats mini"', 1)}</div>
+<section class="alt"><div class="wrap">
+  <div class="head c reveal"><div class="eyebrow">{t("Where we are", "మా కేంద్రాలు")}</div><h2>{t("Three centres, one standard of care.", "మూడు కేంద్రాలు, ఒకే నాణ్యత.")}</h2></div>
+  <div class="centres">{"".join(f'<div class="centre reveal"><span class="ic">{ic(I_PIN)}</span><b>{n}</b><small>{loc}</small><p>{d}</p></div>' for n, loc, d in CENTRES)}</div>
 </div></section>""")
 
+# ── SERVICES ──
 PAGES["services"] = ("Services", page_hero(t("Services", "సేవలు"), t("100-bed hospital. Latest ICU. Modular OT.", "100 పడకల ఆసుపత్రి. ఆధునిక ICU. మాడ్యులర్ OT."),
-    t("In 14 years: 11,500+ angiograms, 4,000 stents with a 99.6% success rate and 2,000 bypass surgeries with a 98% success rate.", "14 సంవత్సరాలలో: 11,500కు పైగా యాంజియోగ్రామ్‌లు, 99.6% విజయ శాతంతో 4,000 స్టెంట్లు, 98% విజయ శాతంతో 2,000 బైపాస్ సర్జరీలు.")) + f"""
-<section><div class="wrap">
-  <div class="head reveal"><div class="eyebrow">{t("Hospital statistics", "ఆసుపత్రి గణాంకాలు")}</div><h2>{t("Experience you can count on.", "లెక్కించదగిన అనుభవం.")}</h2></div>
-  {STATS_HTML}
-  <p class="note">{t("Figures as reported by Praveen Hospitals.", "ప్రవీణ్ హాస్పిటల్స్ నివేదించిన గణాంకాలు.")}</p>
-</div></section>
-<section class="alt"><div class="wrap svc">
+    t("In 14 years: 11,500+ angiograms, 4,000 stents with a 99.6% success rate and 2,000 bypass surgeries with a 98% success rate.", "14 సంవత్సరాలలో: 11,500కు పైగా యాంజియోగ్రామ్‌లు, 99.6% విజయ శాతంతో 4,000 స్టెంట్లు, 98% విజయ శాతంతో 2,000 బైపాస్ సర్జరీలు."), "slider/banner_3.jpg") + f"""
+<section><div class="wrap svc">
   <div class="svc-card reveal"><img src="{IMG}services/cardiology.png" alt="" loading="lazy">
     <h3>{t("Cardiology services", "కార్డియాలజీ సేవలు")}</h3>
     <ul class="ticks"><li>Bypass &amp; Valve Surgeries</li><li>PTCA (Percutaneous Transluminal Coronary Angioplasty)</li><li>Pacemaker &amp; EP Study</li><li>ECG (Electrocardiogram)</li><li>2D Echo</li><li>TMT (Treadmill Test)</li><li>Ambulatory BP monitoring</li><li>Holter analysis</li></ul></div>
@@ -198,32 +264,36 @@ PAGES["services"] = ("Services", page_hero(t("Services", "సేవలు"), t("
     <h3>{t("Radiology services", "రేడియాలజీ సేవలు")}</h3>
     <ul class="ticks"><li>Ultrasound scan</li><li>Doppler</li><li>Mammography (breast cancer screening)</li></ul>
     <div class="callout">{t("Not sure which test you need? Send us your doctor's prescription on WhatsApp.", "ఏ పరీక్ష అవసరమో తెలియదా? మీ డాక్టర్ ప్రిస్క్రిప్షన్‌ను WhatsAppలో పంపండి.")}</div></div>
-</div></section>""" + P["checkups"] + VIDEO_SECTION)
+</div></section>""" + P["checkups"].replace('<section id="checkups">', '<section id="checkups" class="alt">'))
 
+# ── SPECIALITIES ──
+SPEC_BODY = re.sub(r'<div class="head reveal">.*?</div>\s*<div class="spec-grid">', '<div class="spec-grid">', P["specialities"], count=1, flags=re.S)
 PAGES["specialities"] = ("Specialities", page_hero(t("Specialities", "విభాగాలు"), t("Five specialities. One team.", "ఐదు విభాగాలు. ఒకే బృందం."),
-    t("Heart, brain and diagnostic care, coordinated under one roof.", "గుండె, మెదడు, డయాగ్నొస్టిక్ వైద్యం — అన్నీ ఒకే చోట సమన్వయంతో."), "banners/speciality.jpeg")
-    + P["specialities"] + P["doctors"] + CONTACT_STRIP)
+    t("Diagnostics, operating theatres and a cath-lab in one building — so treatment starts faster.", "డయాగ్నొస్టిక్స్, ఆపరేషన్ థియేటర్లు, క్యాథ్ ల్యాబ్ — అన్నీ ఒకే భవనంలో, చికిత్స త్వరగా మొదలవుతుంది."), "banners/speciality.jpeg")
+    + SPEC_BODY)
 
+# ── PATIENT CARE ──
 PAGES["patient-care"] = ("Patient Care", page_hero(t("Patient Care", "పేషెంట్ కేర్"), t("Care that continues at home.", "ఇంటి వరకూ కొనసాగే సంరక్షణ."),
-    t("Personalised attention for elderly, chronically ill and post-surgery patients — from trained, qualified caregivers.", "వృద్ధులు, దీర్ఘకాల వ్యాధిగ్రస్తులు, శస్త్రచికిత్స తర్వాత కోలుకుంటున్న వారికి — శిక్షణ పొందిన సిబ్బందితో వ్యక్తిగత శ్రద్ధ."), "slider/banner_2.jpg") + f"""
+    t("Personalised attention from trained, qualified caregivers — in hospital and at home.", "శిక్షణ పొందిన సిబ్బందితో వ్యక్తిగత శ్రద్ధ — ఆసుపత్రిలోనూ, ఇంటి వద్దనూ."), "slider/banner_4.jpg") + f"""
 <section><div class="wrap two-col">
   <div class="reveal"><div class="eyebrow">{t("Home care", "ఇంటి వద్ద సంరక్షణ")}</div>
     <h2 class="h2">{t("Plans built around your family.", "మీ కుటుంబానికి తగిన ప్రణాళికలు.")}</h2>
-    <p class="lede">{t("Care is delivered through customisable, plan-based programmes that bring family members and caregivers together — a practical option for long-term illness and disease management.", "కుటుంబ సభ్యులు, సంరక్షకులు కలిసి పనిచేసే, అవసరానికి తగ్గట్టు మార్చుకోగల ప్రణాళికలతో సంరక్షణ — దీర్ఘకాల వ్యాధుల నిర్వహణకు ఆచరణీయమైన మార్గం.")}</p>
+    <p class="lede">{t("Customisable, plan-based programmes bring family members and caregivers together — a practical option for long-term illness and disease management.", "కుటుంబ సభ్యులు, సంరక్షకులు కలిసి పనిచేసే, అవసరానికి తగ్గట్టు మార్చుకోగల ప్రణాళికలు — దీర్ఘకాల వ్యాధుల నిర్వహణకు ఆచరణీయమైన మార్గం.")}</p>
     <ul class="ticks"><li>{t("Elderly care", "వృద్ధుల సంరక్షణ")}</li><li>{t("Chronic illness management", "దీర్ఘకాల వ్యాధుల నిర్వహణ")}</li><li>{t("Post-surgery recovery", "శస్త్రచికిత్స తర్వాత కోలుకోవడం")}</li></ul>
     <a class="btn btn-red" href="contact.html#book">{t("Ask about home care", "ఇంటి సంరక్షణ గురించి అడగండి")} →</a></div>
-  <div class="photo reveal"><img src="{IMG}care.png" alt="" loading="lazy" style="object-fit:contain;background:#fff"></div>
-</div></section>""" + P["rights"].replace('<details open>', '<details open>', 1) + f"""
-<section><div class="wrap"><div class="head reveal"><div class="eyebrow">{t("Your rights, in full", "మీ పూర్తి హక్కులు")}</div><h2>{t("As a patient, you can expect:", "పేషెంట్‌గా మీరు ఆశించవచ్చు:")}</h2></div>
-<ul class="ticks big reveal">
-<li>{t("To be treated with respect, consideration, compassion and dignity, in a safe and clean environment.", "సురక్షితమైన, పరిశుభ్రమైన వాతావరణంలో గౌరవం, ఆదరణ, మర్యాదతో కూడిన చికిత్స.")}</li>
-<li>{t("Full protection of your privacy, dignity and confidentiality in discussions, examinations and treatment.", "చర్చలు, పరీక్షలు, చికిత్సలో మీ గోప్యత మరియు గౌరవానికి పూర్తి రక్షణ.")}</li>
-<li>{t("A clear explanation of your diagnosis, the benefits and risks of each treatment, and the expected outcome.", "మీ వ్యాధి నిర్ధారణ, ప్రతి చికిత్స ప్రయోజనాలు, ప్రమాదాలు, ఆశించిన ఫలితంపై స్పష్టమైన వివరణ.")}</li>
-<li>{t("To be told why any person is present during your care.", "మీ చికిత్స సమయంలో ఎవరైనా ఎందుకు ఉన్నారో తెలుసుకునే హక్కు.")}</li>
-<li>{t("Written permission before your records are shared with anyone not directly involved in your care.", "మీ చికిత్సతో సంబంధం లేని వారికి రికార్డులు ఇచ్చే ముందు మీ లిఖిత అనుమతి.")}</li>
-<li>{t("Protection from physical abuse and neglect.", "శారీరక వేధింపులు, నిర్లక్ష్యం నుండి రక్షణ.")}</li>
-</ul></div></section>""")
+  <div class="float-img reveal"><img src="{IMG}care.png" alt="" loading="lazy"></div>
+</div></section>
+<section class="alt"><div class="wrap"><div class="head c reveal"><div class="eyebrow">{t("Patient rights", "పేషెంట్ హక్కులు")}</div><h2>{t("As our patient, you can expect:", "మా పేషెంట్‌గా మీరు ఆశించవచ్చు:")}</h2></div>
+<div class="rights">{"".join(f'<div class="right reveal"><span class="ok">{ic(I_CHECK, size=18)}</span><div><b>{h}</b><p>{d}</p></div></div>' for h, d in [
+ (t("Informed consent", "సమాచారంతో కూడిన అంగీకారం"), t("Except in emergencies, a clear description of any procedure, its risks, the alternatives and who will perform it — before you decide.", "అత్యవసర పరిస్థితులు తప్ప, ఏ చికిత్స అయినా — దాని ప్రమాదాలు, ప్రత్యామ్నాయాలు, ఎవరు చేస్తారు — మీరు నిర్ణయించే ముందే వివరిస్తాం.")),
+ (t("Clear explanations", "స్పష్టమైన వివరణ"), t("Your diagnosis, the benefits and risks of each treatment and the expected outcome, in words you understand.", "మీ వ్యాధి నిర్ధారణ, ప్రతి చికిత్స ప్రయోజనాలు, ప్రమాదాలు, ఆశించిన ఫలితం — మీకు అర్థమయ్యే మాటల్లో.")),
+ (t("Privacy &amp; confidentiality", "గోప్యత"), t("Discussions, examinations and records stay confidential. Records are shared only with your written permission.", "చర్చలు, పరీక్షలు, రికార్డులు గోప్యంగా ఉంటాయి. మీ లిఖిత అనుమతితోనే రికార్డులు ఇతరులకు ఇస్తాం.")),
+ (t("Respect &amp; dignity", "గౌరవం"), t("Compassionate care in a safe, clean environment — regardless of age, gender, origin, religion or disability.", "వయస్సు, లింగం, మతం, వైకల్యంతో సంబంధం లేకుండా — సురక్షితమైన, పరిశుభ్రమైన వాతావరణంలో ఆదరణతో కూడిన వైద్యం.")),
+ (t("Knowing who is present", "ఎవరు ఉన్నారో తెలుసుకోవడం"), t("You may ask why any person is present during your care.", "మీ చికిత్స సమయంలో ఎవరైనా ఎందుకు ఉన్నారో అడిగే హక్కు మీకు ఉంది.")),
+ (t("Safety", "భద్రత"), t("Protection from physical abuse and neglect.", "శారీరక వేధింపులు, నిర్లక్ష్యం నుండి రక్షణ.")),
+])}</div></div></section>""")
 
+# ── EMPANELMENTS ──
 SCHEMES = [
     ("Dr YSR Aarogyasri", "Dr YSR Healthcare Trust", "డా. వైఎస్ఆర్ ఆరోగ్యశ్రీ"),
     ("EHS", "AP State Govt. Employee Health Scheme", "ఏపీ ప్రభుత్వ ఉద్యోగుల ఆరోగ్య పథకం"),
@@ -242,36 +312,43 @@ PAGES["empanelments"] = ("Empanelments", page_hero(t("Empanelments", "పథక�
     t("Treatment at CGHS rates, with cashless care under 12 government schemes and insurers.", "CGHS ధరలకే చికిత్స — 12 ప్రభుత్వ పథకాలు, ఇన్సూరెన్స్‌లతో క్యాష్‌లెస్ సేవలు."), "slider/banner_1.jpg") + f"""
 <section><div class="wrap">
   <div class="schemes">{"".join(f'<div class="scheme reveal"><span class="ok">{ic(I_CHECK, size=18)}</span><span><b>{n}</b><small>{t(en, te)}</small></span></div>' for n, en, te in SCHEMES)}</div>
-  <div class="steps3 reveal">
-    <div><b>1</b>{t("Bring your scheme card or insurance policy and photo ID.", "మీ పథకం కార్డు లేదా ఇన్సూరెన్స్ పాలసీ, ఫోటో ID తీసుకురండి.")}</div>
-    <div><b>2</b>{t("Our desk checks your eligibility and starts pre-authorisation.", "మా సిబ్బంది అర్హతను పరిశీలించి ముందస్తు అనుమతి ప్రక్రియ ప్రారంభిస్తారు.")}</div>
-    <div><b>3</b>{t("Get treated — we handle the paperwork with the scheme.", "చికిత్స పొందండి — పథకం పత్రాల పని మేము చూసుకుంటాం.")}</div>
-  </div>
-  <p class="note" style="text-align:center">{t("Coverage depends on your scheme's rules. Call 0866-2444440 to confirm before admission.", "కవరేజ్ మీ పథకం నియమాలపై ఆధారపడి ఉంటుంది. చేరే ముందు 0866-2444440కి కాల్ చేసి నిర్ధారించుకోండి.")}</p>
-</div></section>""" + CONTACT_STRIP)
-
-GALLERY = [("slider/banner_3.jpg", "ICU"), ("gallery/gallery_1.jpg", ""), ("gallery/gallery_2.jpg", ""), ("gallery/gallery_3.jpg", ""),
-           ("gallery/gallery_4.jpg", ""), ("gallery/gallery_5.jpg", ""), ("gallery/gallery_6.jpg", ""), ("gallery/gallery_7.jpg", ""),
-           ("slider/banner_4.jpg", ""), ("slider/banner_5.jpg", ""), ("praveen.jpg", "")]
-PAGES["gallery"] = ("Gallery", page_hero(t("Gallery", "గ్యాలరీ"), t("Inside Praveen Hospitals.", "ప్రవీణ్ హాస్పిటల్స్ లోపల."),
-    t("Our ICU, operating theatres, cath-lab and wards.", "మా ICU, ఆపరేషన్ థియేటర్లు, క్యాథ్ ల్యాబ్, వార్డులు."), "gallery/gallery_4.jpg") + f"""
-<section><div class="wrap">
-  <div class="head reveal"><div class="eyebrow">{t("Video", "వీడియో")}</div><h2>{t("Open heart surgery", "ఓపెన్ హార్ట్ సర్జరీ")}</h2></div>
-  <div class="reveal" style="max-width:900px">{VIDEO}</div>
 </div></section>
 <section class="alt"><div class="wrap">
-  <div class="head reveal"><div class="eyebrow">{t("Photos", "ఫోటోలు")}</div><h2>{t("Facilities", "సదుపాయాలు")}</h2><p>{t("Tap any photo to enlarge.", "పెద్దగా చూడటానికి ఫోటోపై నొక్కండి.")}</p></div>
-  <div class="pgrid">{"".join(f'<button class="ph reveal" data-full="{IMG}{f}"><img src="{IMG}{f}" alt="Praveen Hospitals photo {i+1}" loading="lazy"></button>' for i, (f, c) in enumerate(GALLERY))}</div>
+  <div class="head c reveal"><div class="eyebrow">{t("How cashless works", "క్యాష్‌లెస్ ఎలా పనిచేస్తుంది")}</div><h2>{t("Three simple steps.", "మూడు సులభమైన దశలు.")}</h2></div>
+  <div class="steps3">
+    <div class="reveal"><b>1</b><span>{t("Bring your scheme card or insurance policy and photo ID.", "మీ పథకం కార్డు లేదా ఇన్సూరెన్స్ పాలసీ, ఫోటో ID తీసుకురండి.")}</span></div>
+    <div class="reveal"><b>2</b><span>{t("Our desk checks your eligibility and starts pre-authorisation.", "మా సిబ్బంది అర్హతను పరిశీలించి ముందస్తు అనుమతి ప్రక్రియ ప్రారంభిస్తారు.")}</span></div>
+    <div class="reveal"><b>3</b><span>{t("Get treated — we handle the paperwork with the scheme.", "చికిత్స పొందండి — పథకం పత్రాల పని మేము చూసుకుంటాం.")}</span></div>
+  </div>
+  <p class="note" style="text-align:center">{t("Coverage depends on your scheme's rules. Call 0866-2444440 to confirm before admission.", "కవరేజ్ మీ పథకం నియమాలపై ఆధారపడి ఉంటుంది. చేరే ముందు 0866-2444440కి కాల్ చేసి నిర్ధారించుకోండి.")}</p>
+</div></section>""")
+
+# ── GALLERY ──
+GALLERY = ["slider/banner_3.jpg", "gallery/gallery_1.jpg", "gallery/gallery_2.jpg", "gallery/gallery_3.jpg", "gallery/gallery_4.jpg",
+           "gallery/gallery_5.jpg", "gallery/gallery_6.jpg", "gallery/gallery_7.jpg", "slider/banner_4.jpg", "slider/banner_5.jpg"]
+PAGES["gallery"] = ("Gallery", page_hero(t("Gallery", "గ్యాలరీ"), t("Inside Praveen Hospitals.", "ప్రవీణ్ హాస్పిటల్స్ లోపల."),
+    t("Our ICU, operating theatres, cath-lab and wards.", "మా ICU, ఆపరేషన్ థియేటర్లు, క్యాథ్ ల్యాబ్, వార్డులు."), "gallery/gallery_4.jpg") + f"""
+<section><div class="wrap two-col">
+  <div class="reveal"><div class="eyebrow">{t("Video", "వీడియో")}</div><h2 class="h2">{t("Open heart surgery", "ఓపెన్ హార్ట్ సర్జరీ")}</h2>
+    <p class="lede">{t("A look inside one of our modular operating theatres.", "మా మాడ్యులర్ ఆపరేషన్ థియేటర్ లోపలి దృశ్యం.")}</p></div>
+  <div class="reveal">{VIDEO}</div>
+</div></section>
+<section class="alt"><div class="wrap">
+  <div class="head c reveal"><div class="eyebrow">{t("Photos", "ఫోటోలు")}</div><h2>{t("Our facilities", "మా సదుపాయాలు")}</h2><p>{t("Tap any photo to enlarge.", "పెద్దగా చూడటానికి ఫోటోపై నొక్కండి.")}</p></div>
+  <div class="pgrid">{"".join(f'<button class="ph reveal" data-full="{IMG}{f}"><img src="{IMG}{f}" alt="Praveen Hospitals photo {i+1}" loading="lazy"></button>' for i, f in enumerate(GALLERY))}</div>
 </div></section>
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo"><button class="lb-x" aria-label="Close">×</button><img alt=""></div>""")
 
+# ── CONTACT ── (phone numbers live in the cards; the booking section keeps only address + map)
+BOOK = re.sub(r'<div class="card"><span class="ic">.*?</span></div>\s*', '', BOOK, count=1, flags=re.S)
 PAGES["contact"] = ("Contact Us", page_hero(t("Contact Us", "సంప్రదించండి"), t("We're here 24×7.", "24×7 అందుబాటులో ఉన్నాం."),
     t("Call, WhatsApp, or book online — whatever is easiest for you.", "కాల్, WhatsApp లేదా ఆన్‌లైన్ బుకింగ్ — మీకు ఏది సులభమో అది."), "slider/banner_5.jpg") + f"""
 <section style="padding-bottom:0"><div class="wrap qc">
   <a class="qcard reveal" href="tel:+918662444440"><span class="ic">{ic(I_PHONE)}</span><b>{t("Emergency &amp; appointments", "అత్యవసరం &amp; అపాయింట్‌మెంట్లు")}</b><span>0866-2444440 · 0866-2444414</span></a>
   <a class="qcard reveal" href="tel:+919948878877"><span class="ic">{ic(I_MOBILE)}</span><b>{t("Mobile", "మొబైల్")}</b><span>+91 99488 78877</span></a>
   <a class="qcard reveal" href="mailto:praveencardiaccentre@gmail.com"><span class="ic">{ic(I_MAIL)}</span><b>{t("Email", "ఈమెయిల్")}</b><span>praveencardiaccentre@gmail.com</span></a>
-</div></section>""" + BOOK + P["camps"])
+</div></section>""" + BOOK)
+
 
 CSS_EXTRA = """
 /* ── multi-page additions ─────────────────────────────── */
@@ -372,6 +449,193 @@ CSS_EXTRA = """
   .pgrid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:640px){ .spec.cta{grid-template-columns:1fr} .spec.cta .btn{grid-column:1;grid-row:auto;justify-self:start} .nav .act{display:flex} .nav .act .btn-red{display:none} .nav .act .btn-line{display:inline-flex;padding:9px 12px} }
+
+/* ══ v2: white surfaces + soft layered shadows ══════════════════════════ */
+:root{
+  --sh-1:0 1px 2px rgba(28,36,48,.04),0 6px 18px rgba(28,36,48,.07);
+  --sh-2:0 2px 6px rgba(28,36,48,.05),0 18px 40px rgba(28,36,48,.10);
+  --sh-3:0 4px 10px rgba(28,36,48,.06),0 28px 60px -12px rgba(28,36,48,.22);
+  --sh-red:0 10px 28px -8px rgba(198,40,40,.55);
+  --bg:#f7f6f4;
+}
+body{background:#fff}
+.alt{background:linear-gradient(180deg,#faf9f7 0%,#f5f3f0 100%)}
+section{padding:104px 0}
+section.tight{padding:72px 0}
+
+/* buttons */
+.btn{border-radius:14px}
+.btn-red{background:linear-gradient(180deg,#d63333,#c62828 55%,#b62222);box-shadow:var(--sh-red),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn-red:hover{background:linear-gradient(180deg,#c62828,#a81f1f);box-shadow:0 14px 32px -8px rgba(198,40,40,.6)}
+.btn-line,.btn-white{background:#fff;color:var(--ink);box-shadow:var(--sh-1)}
+.btn-line:hover,.btn-white:hover{box-shadow:var(--sh-2);color:var(--red)}
+.btn-ghost-w{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
+.btn-ghost-w:hover{background:rgba(255,255,255,.24)}
+
+/* top bar with scrolling notice (as on the original site) */
+.ebar .wrap{gap:18px}
+.ebar .pulse{white-space:nowrap}
+.ticker{flex:1;overflow:hidden;min-width:0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.tk-track{display:inline-flex;white-space:nowrap;animation:tick 48s linear infinite}
+.tk-track span{padding-right:28px;font-size:13.5px;font-weight:500}
+.tk-track b{opacity:.6;margin:0 10px}
+.ticker:hover .tk-track{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.ebar-r{display:flex;align-items:center;gap:16px;white-space:nowrap}
+
+/* header: larger logo, shadow + compact on scroll */
+header{background:#fff;border-bottom:0;box-shadow:0 1px 0 var(--line);transition:box-shadow .25s}
+header.scrolled{box-shadow:0 8px 30px rgba(28,36,48,.10)}
+.nav{height:88px;transition:height .25s}
+.brand img{height:60px;transition:height .25s}
+header.scrolled .nav{height:70px}
+header.scrolled .brand img{height:48px}
+.tabs{border-top:1px solid #f0efed}
+
+/* headings: red heartbeat line before eyebrows, accent bar under section titles */
+.eyebrow{display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:34px;height:14px;flex:0 0 auto;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 14' fill='none' stroke='%23c62828' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 7h9l3-5 4 10 3-7 2 2h11'/%3E%3C/svg%3E") center/contain no-repeat}
+.head h2::after,.h2::after{content:"";display:block;width:56px;height:4px;border-radius:4px;background:var(--red);margin-top:18px}
+.head.c h2::after{margin-left:auto;margin-right:auto}
+.cta-band h2::after,.cap h1::after,.cap h2::after,.phero h1::after{display:none}
+
+/* cards: white, no hard borders, soft shadow, lift on hover */
+.spec,.pk,.camp,.member,.scheme,.svc-card,.qcard,.mvcard,.stat,.info .card,details,.centre,.right,.steps3 div,.form{border:0 !important;background:#fff;box-shadow:var(--sh-1)}
+.spec,.pk,.member,.scheme,.svc-card,.qcard,.mvcard,.stat,.centre,.right,.steps3 div{transition:transform .25s ease,box-shadow .25s ease}
+.spec:hover,.pk:hover,.member:hover,.scheme:hover,.svc-card:hover,.qcard:hover,.mvcard:hover,.stat:hover,.centre:hover,.right:hover{transform:translateY(-5px);box-shadow:var(--sh-3)}
+.pk.pop{box-shadow:0 0 0 2px var(--red),var(--sh-2)}
+.form{box-shadow:var(--sh-2)}
+.spec.cta{background:linear-gradient(135deg,#d63333,#a81f1f);box-shadow:var(--sh-red)}
+.photo,.video-card,.map{box-shadow:var(--sh-2);border:0}
+
+/* page headers: photo with a white wash over it */
+.phero{background:#fff;color:var(--ink);border-bottom:1px solid #f0efed}
+.phero::before{left:35%;opacity:1;background:var(--bg) center/cover}
+.phero::after{background:linear-gradient(90deg,#fff 0%,#fff 34%,rgba(255,255,255,.88) 46%,rgba(255,255,255,.25) 72%,rgba(255,255,255,0) 100%)}
+.phero .wrap{padding:76px 24px 82px}
+.phero .crumb{color:var(--muted)}
+.phero .crumb a{color:var(--red);text-decoration:none;font-weight:700}
+.phero h1{color:var(--navy);max-width:16ch}
+.phero p{color:var(--muted)}
+
+/* home slider */
+.hero2{position:relative;height:600px;overflow:hidden;background:#fff}
+.slides,.slide{position:absolute;inset:0}
+.slide{opacity:0;visibility:hidden;transition:opacity .9s ease,visibility .9s}
+.slide.on{opacity:1;visibility:visible}
+.slide::before{content:"";position:absolute;inset:0 0 0 30%;background:var(--img) center/cover;transform:scale(1.08);transition:transform 7s ease-out}
+.slide.on::before{transform:scale(1)}
+.slide::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#fff 0%,#fff 32%,rgba(255,255,255,.9) 44%,rgba(255,255,255,.2) 70%,rgba(255,255,255,0) 100%)}
+.slide .wrap{position:relative;z-index:2;height:100%;display:flex;align-items:center}
+.cap{max-width:560px;transform:translateY(16px);opacity:0;transition:transform .8s .25s ease,opacity .8s .25s ease}
+.slide.on .cap{transform:none;opacity:1}
+.cap h1,.cap h2{font-size:clamp(36px,4.6vw,58px);margin:14px 0 16px;color:var(--navy)}
+.cap p{font-size:19px;color:var(--muted);max-width:46ch}
+.cap .ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.s-ctrl{position:absolute;left:0;right:0;bottom:84px;z-index:3;display:flex;align-items:center;gap:14px}
+.s-btn{width:44px;height:44px;border-radius:50%;border:0;background:#fff;box-shadow:var(--sh-1);font-size:24px;line-height:1;color:var(--ink);cursor:pointer}
+.s-btn:hover{color:var(--red);box-shadow:var(--sh-2)}
+.dots{display:flex;gap:8px}
+.dots button{width:10px;height:10px;border-radius:999px;border:0;background:#d8d4cf;cursor:pointer;padding:0;transition:width .3s,background .3s}
+.dots button[aria-current]{width:34px;background:var(--red)}
+
+/* camp strip overlapping the slider (as on the original homepage) */
+.camp-strip{position:relative;z-index:5;margin-top:-56px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.cs{display:flex;gap:16px;align-items:center;background:#fff;border-radius:18px;padding:18px 20px;box-shadow:var(--sh-2)}
+.cs b{display:block;font-size:16px}
+.cs span{color:var(--muted);font-size:14px}
+.cs .next{display:inline-block;margin-top:6px;font-style:normal;font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-l);padding:3px 9px;border-radius:7px}
+.cs .cal{flex:0 0 70px;box-shadow:none;border:1px solid #f0efed}
+.cs .cal .d{font-size:26px}
+.cs-red{background:linear-gradient(135deg,#d63333,#a81f1f);color:#fff;box-shadow:var(--sh-red)}
+.cs-red span{color:#ffe3e0}
+.cs-red .big{display:block;color:#fff;font-size:24px;font-weight:800;letter-spacing:-.01em}
+.cs-ic{width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.18);display:grid;place-items:center;color:#fff;flex:0 0 auto}
+
+/* home: portrait card, speciality tiles, stats, floating image, CTA band */
+.portrait-card{position:relative;max-width:380px;margin:0 auto;padding:18px;background:#fff;border-radius:26px;box-shadow:var(--sh-3)}
+.portrait-card img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;border-radius:18px}
+.pc-badge{position:absolute;top:-18px;right:-18px;background:var(--red);color:#fff;border-radius:18px;padding:14px 18px;text-align:center;box-shadow:var(--sh-red)}
+.pc-badge b{display:block;font-size:26px;line-height:1}
+.pc-badge span{font-size:12px;font-weight:600;opacity:.9}
+.pc-name{position:absolute;left:-22px;bottom:34px;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:var(--sh-2)}
+.pc-name b{display:block}
+.pc-name small{color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.tile{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;box-shadow:var(--sh-1);transition:transform .3s,box-shadow .3s;background:#fff}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(28,36,48,.82))}
+.tile span{position:absolute;z-index:1;left:16px;right:16px;bottom:16px;color:#fff;font-weight:800;font-size:17px;display:flex;justify-content:space-between;gap:8px;align-items:end}
+.tile i{font-style:normal;width:30px;height:30px;border-radius:50%;background:#fff;color:var(--red);display:grid;place-items:center;flex:0 0 auto;transform:translateX(-6px);opacity:0;transition:.3s}
+.tile:hover{transform:translateY(-6px);box-shadow:var(--sh-3)}
+.tile:hover img{transform:scale(1.07)}
+.tile:hover i{opacity:1;transform:none}
+.stats{gap:18px}
+.stat{border-radius:20px;padding:24px;align-items:flex-start}
+.st-ic{width:58px;height:58px;border-radius:16px;background:var(--red-l);color:var(--red);display:grid;place-items:center;margin-bottom:10px}
+.st-ic img{width:38px;height:38px;object-fit:contain;mix-blend-mode:multiply;margin:0}
+.stat b{font-size:34px;color:var(--red)}
+.float-img{display:grid;place-items:center}
+.float-img img{max-width:100%;max-height:380px;filter:drop-shadow(0 30px 40px rgba(28,36,48,.15))}
+.cta-band{border-radius:28px;padding:48px 52px;background:linear-gradient(135deg,#d63333 0%,#b62222 60%,#8f1b1b 100%);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap;box-shadow:var(--sh-red);position:relative;overflow:hidden}
+.cta-band::before{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.08)}
+.cta-band h2{color:#fff;font-size:clamp(26px,3vw,36px)}
+.cta-band p{color:#ffe3e0;margin-top:8px;font-size:17px}
+.cta-acts{display:flex;gap:12px;flex-wrap:wrap;position:relative}
+
+/* about centres, patient rights */
+.centres{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.centre{border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:6px}
+.centre .ic{width:46px;height:46px;border-radius:14px;background:var(--red-l);color:var(--red);display:grid;place-items:center;margin-bottom:8px}
+.centre small{color:var(--muted)}
+.centre p{color:var(--ink);margin-top:6px}
+.rights{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.right{display:flex;gap:16px;border-radius:18px;padding:22px}
+.right .ok{flex:0 0 38px;height:38px;border-radius:50%;background:var(--green-l);color:var(--green);display:grid;place-items:center}
+.right b{display:block;margin-bottom:4px}
+.right p{color:var(--muted);font-size:15px}
+.steps3 div{border-radius:18px;padding:24px;flex-direction:column;gap:12px}
+.steps3 b{width:40px;height:40px;flex:none;box-shadow:var(--sh-red)}
+.member img{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--red-l)}
+
+/* floating WhatsApp + back to top */
+.fab-wa{position:fixed;right:22px;bottom:22px;z-index:45;display:flex;align-items:center;gap:10px;background:var(--wa);color:#063b1c;font-weight:800;padding:12px 18px 12px 14px;border-radius:999px;box-shadow:0 14px 30px -8px rgba(37,211,102,.6)}
+.fab-wa::before{content:"";position:absolute;inset:-6px;border-radius:inherit;border:2px solid rgba(37,211,102,.45);animation:ring 2.4s ease-out infinite}
+@keyframes ring{from{transform:scale(.95);opacity:1}to{transform:scale(1.18);opacity:0}}
+.to-top{position:fixed;right:26px;bottom:90px;z-index:45;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--red);font-size:20px;font-weight:800;box-shadow:var(--sh-2);cursor:pointer;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+
+@media (prefers-reduced-motion:reduce){.tk-track{animation:none}.slide::before{transition:none;transform:none}.fab-wa::before{animation:none}}
+@media (max-width:980px){
+  .hero2{height:560px}
+  .slide::before{inset:0}
+  .slide::after{background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.93) 52%,#fff 100%)}
+  .slide .wrap{align-items:flex-end;padding-bottom:120px}
+  .s-ctrl{bottom:66px}
+  .camp-strip{grid-template-columns:1fr;margin-top:-40px}
+  .tiles{grid-template-columns:repeat(3,1fr)}
+  .centres,.rights{grid-template-columns:1fr}
+  .phero::before{left:0}
+  .phero::after{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.95) 60%,#fff)}
+  .ticker{display:none}
+  .pc-name{left:10px}
+  .pc-badge{right:6px}
+}
+@media (max-width:640px){
+  .nav{height:70px}
+  .brand img{height:46px}
+  header.scrolled .nav{height:62px}
+  header.scrolled .brand img{height:40px}
+  .hero2{height:540px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .tile{aspect-ratio:1/1}
+  .cta-band{padding:32px 26px}
+  .fab-wa{display:none}
+  .to-top{bottom:96px;right:16px}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat b{font-size:28px}
+  .ebar .pulse{display:none}
+}
 """
 
 SITE_JS = r"""// Praveen Hospitals redesign preview — shared script for all pages.
@@ -476,6 +740,48 @@ addEventListener("keydown", e => { if (e.key === "Escape") { modal && modal.clas
 // ── reveal on scroll ──
 const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold: .1 }) : null;
 document.querySelectorAll(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+
+// ── header: shrink + shadow on scroll; back-to-top ──
+const hdr = document.querySelector("header"), toTop = document.querySelector(".to-top");
+const onScroll = () => { const y = scrollY > 40; hdr && hdr.classList.toggle("scrolled", y); toTop && toTop.classList.toggle("show", scrollY > 600); };
+addEventListener("scroll", onScroll, { passive: true }); onScroll();
+if (toTop) toTop.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+
+// ── home slider: autoplay, arrows, dots, swipe; pauses on hover/focus; no autoplay for reduced motion ──
+const hero = document.querySelector(".hero2");
+if (hero) {
+  const slides = [...hero.querySelectorAll(".slide")], dots = [...hero.querySelectorAll(".dots button")];
+  let i = 0, timer = null;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const go = (n) => {
+    slides[i].classList.remove("on"); dots[i].removeAttribute("aria-current");
+    i = (n + slides.length) % slides.length;
+    slides[i].classList.add("on"); dots[i].setAttribute("aria-current", "true");
+  };
+  const play = () => { if (!reduce) { clearInterval(timer); timer = setInterval(() => go(i + 1), 6500); } };
+  const stop = () => clearInterval(timer);
+  hero.querySelector(".s-next").addEventListener("click", () => { go(i + 1); play(); });
+  hero.querySelector(".s-prev").addEventListener("click", () => { go(i - 1); play(); });
+  dots.forEach((d, n) => d.addEventListener("click", () => { go(n); play(); }));
+  hero.addEventListener("mouseenter", stop); hero.addEventListener("mouseleave", play);
+  hero.addEventListener("focusin", stop); hero.addEventListener("focusout", play);
+  let x0 = null;
+  hero.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  hero.addEventListener("touchend", e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) { go(i + (dx < 0 ? 1 : -1)); play(); } x0 = null; });
+  play();
+}
+
+// ── animated counters for hospital statistics ──
+const counters = document.querySelectorAll(".count[data-to]");
+if (counters.length && "IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const co = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return; co.unobserve(en.target);
+    const el = en.target, to = +el.dataset.to, t0 = performance.now(), dur = 1400;
+    const step = (now) => { const p = Math.min((now - t0) / dur, 1), v = Math.round(to * (1 - Math.pow(1 - p, 3))); el.textContent = v.toLocaleString("en-IN"); if (p < 1) requestAnimationFrame(step); };
+    el.textContent = "0"; requestAnimationFrame(step);
+  }), { threshold: .4 });
+  counters.forEach(c => co.observe(c));
+}
 
 let saved = "en"; try { saved = localStorage.getItem("ph-lang") || "en"; } catch (e) {}
 setLang(saved);
