@@ -1,0 +1,15 @@
+index
+about-school
+management
+history
+careers
+academics
+achievements
+activities
+facilities
+infrastructure
+transport
+gallery
+alumni
+enquiry
+contact-us

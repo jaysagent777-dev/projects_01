@@ -1,0 +1,8 @@
+index
+about
+management
+academics
+admission
+disclosure
+gallery
+contact
