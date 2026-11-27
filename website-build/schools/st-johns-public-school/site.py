@@ -399,6 +399,78 @@ S["extra_css"] = r"""
 @media (max-width:640px){.centres{grid-template-columns:1fr}.ach article{grid-template-columns:1fr}.ach img{width:100%;max-width:245px}.hero2{height:560px}}
 """
 
+
+S["extra_css"] += r"""
+/* ── colour pass: St. John's blue + school colours (sun yellow, teal, coral, purple) ── */
+:root{--sj1:#2f5f9f;--sj2:#f2a900;--sj3:#16a085;--sj4:#e2503c;--sj5:#7a4fc2;--sjsky:#eaf2fc;--sjsun:#fff6df}
+.alt{background:var(--sjsky)}
+/* page title strip: blue gradient with soft circles */
+.phero{background:linear-gradient(120deg,#1d3c6b 0%,#2f5f9f 55%,#3f7bc8 100%);position:relative;overflow:hidden}
+.phero .wrap{position:relative;z-index:1}
+.phero h1{color:#fff}
+.phero p{color:#dbe7f7}
+.phero .crumb{color:#bcd0ec}
+.phero .crumb a{color:#ffd166}
+.phero .wrap::after{content:"";position:absolute;right:-60px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(242,169,0,.35),transparent 70%);pointer-events:none}
+.subnav{background:#fff}
+/* home hero: light sky tint instead of plain white */
+.hero2{background:var(--sjsky)}
+.slide::after{background:linear-gradient(90deg,var(--sjsky) 0%,var(--sjsky) 44%,rgba(234,242,252,.7) 49%,rgba(234,242,252,.12) 64%,rgba(234,242,252,0) 100%)}
+@media (max-width:980px){.slide::after{background:linear-gradient(180deg,rgba(234,242,252,.55) 0%,rgba(234,242,252,.93) 52%,var(--sjsky) 100%)}}
+.slide .eyebrow{color:var(--sj4)}
+/* strip cards under the hero */
+.camp-strip .cs:nth-child(1) .cs-ic2{background:#fff1cc;color:#b77d00}
+.camp-strip .cs:nth-child(2) .cs-ic2{background:#d9f3ec;color:var(--sj3)}
+/* numbers band: deep blue */
+section:has(.stats){background:linear-gradient(135deg,#1d3c6b,#2f5f9f 60%,#3a72b8);color:#fff}
+section:has(.stats) .head h2{color:#fff}
+section:has(.stats) .head p{color:#d6e3f5}
+section:has(.stats) .eyebrow{color:#ffd166}
+section:has(.stats) .head h2::after{background:#ffd166}
+.stat{border-top:4px solid var(--cc,#2f5f9f)}
+.stats .stat:nth-child(1){--cc:var(--sj2)}.stats .stat:nth-child(2){--cc:var(--sj3)}.stats .stat:nth-child(3){--cc:var(--sj4)}.stats .stat:nth-child(4){--cc:var(--sj5)}
+.stats .stat .st-ic{background:color-mix(in srgb,var(--cc) 14%,#fff);color:var(--cc)}
+.stats .stat b{color:var(--cc)}
+.stats .stat:nth-child(1) b{color:#b77d00}
+/* icon cards: one colour each */
+.icard{border-top:4px solid var(--cc)}
+.icards .icard:nth-child(5n+1){--cc:var(--sj1)}.icards .icard:nth-child(5n+2){--cc:var(--sj2)}.icards .icard:nth-child(5n+3){--cc:var(--sj3)}
+.icards .icard:nth-child(5n+4){--cc:var(--sj4)}.icards .icard:nth-child(5n+5){--cc:var(--sj5)}
+.icards .icard .ic{background:color-mix(in srgb,var(--cc) 13%,#fff);color:var(--cc)}
+.icards .icard:nth-child(5n+2) .ic{color:#b77d00}
+/* admissions steps on a warm band */
+section:has(.steps3){background:linear-gradient(180deg,var(--sjsun),#fff0c7)}
+.steps3 div{border-top:4px solid var(--cc)}
+.steps3 div:nth-child(1){--cc:var(--sj1)}.steps3 div:nth-child(2){--cc:var(--sj3)}.steps3 div:nth-child(3){--cc:var(--sj4)}
+.steps3 b{background:var(--cc)}
+/* people, campuses, quote, routes */
+.people .person{border-left:5px solid var(--cc,var(--sj1))}
+.people .person:nth-child(2){--cc:var(--sj2)}
+.centres .centre{border-top:4px solid var(--cc)}
+.centres .centre:nth-child(5n+1){--cc:var(--sj1)}.centres .centre:nth-child(5n+2){--cc:var(--sj3)}.centres .centre:nth-child(5n+3){--cc:var(--sj4)}
+.centres .centre:nth-child(5n+4){--cc:var(--sj5)}.centres .centre:nth-child(5n+5){--cc:var(--sj2)}
+.centres .centre .ic{background:color-mix(in srgb,var(--cc) 13%,#fff);color:var(--cc)}
+.quote2{border-left-color:var(--sj2);background:var(--sjsun)}
+.routes details:nth-child(1){border-left:5px solid var(--sj1)}.routes details:nth-child(2){border-left:5px solid var(--sj3)}
+.routes details:nth-child(3){border-left:5px solid var(--sj4)}.routes details:nth-child(4){border-left:5px solid var(--sj5)}
+.chips2 span:nth-child(5n+1){background:#e3edfa;color:#1f4a85}.chips2 span:nth-child(5n+2){background:#fff1cc;color:#8a5a00}
+.chips2 span:nth-child(5n+3){background:#d9f3ec;color:#0e6e5c}.chips2 span:nth-child(5n+4){background:#fde3df;color:#a8321f}.chips2 span:nth-child(5n+5){background:#ece4fa;color:#55349a}
+.ach article{border-left:5px solid var(--cc)}
+.ach article:nth-child(1){--cc:var(--sj3)}.ach article:nth-child(2){--cc:var(--sj2)}.ach article:nth-child(3){--cc:var(--sj4)}
+.tiles{grid-template-columns:repeat(4,1fr)}
+@media (max-width:980px){.tiles{grid-template-columns:1fr 1fr}}
+/* call-to-action band: blue to purple */
+.cta-band{background:linear-gradient(120deg,#2f5f9f,#4a5fc2 55%,#7a4fc2)}
+/* gallery: a colour per year */
+.yr:nth-of-type(1){--cc:var(--sj4)}.yr:nth-of-type(2){--cc:var(--sj3)}.yr:nth-of-type(3){--cc:var(--sj5)}.yr:nth-of-type(4){--cc:var(--sj1)}
+.yhead{border-bottom-color:color-mix(in srgb,var(--cc) 30%,#fff)}
+.yhead h2{color:var(--cc)}
+.album{border-top:4px solid var(--cc)}
+.album .meta i{color:var(--cc)}
+.ychips a:nth-child(1){color:var(--sj4)}.ychips a:nth-child(2){color:var(--sj3)}.ychips a:nth-child(3){color:var(--sj5)}.ychips a:nth-child(4){color:var(--sj1)}.ychips a:nth-child(5){color:#b77d00}
+.ychips a:hover{color:#fff}
+"""
+
 if __name__ == "__main__":
     out = Path(__file__).resolve().parent
     for f in out.glob("*.html"):
