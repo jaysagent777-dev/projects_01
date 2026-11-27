@@ -64,11 +64,24 @@ if (form) {
 }
 if (modal) { $("mClose").addEventListener("click", () => modal.classList.remove("open")); modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); }); }
 
-// lightbox
+// lightbox: prev / next within the clicked photo's album ([data-group]), arrow keys and swipe
 const lb = $("lightbox");
 if (lb) {
-  document.querySelectorAll("[data-full]").forEach(b => b.addEventListener("click", () => { lb.querySelector("img").src = b.dataset.full; lb.classList.add("open"); }));
-  lb.addEventListener("click", e => { if (e.target !== lb.querySelector("img")) lb.classList.remove("open"); });
+  const img = lb.querySelector("img"), num = lb.querySelector(".lb-n");
+  let set = [], idx = 0, x0 = null;
+  const show = i => { idx = (i + set.length) % set.length; img.src = set[idx].dataset.full; if (num) num.textContent = set.length > 1 ? (idx + 1) + " / " + set.length : ""; lb.classList.toggle("multi", set.length > 1); };
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-full]"); if (!b || lb.contains(b)) return;
+    const g = b.closest("[data-group]") || document; set = [...g.querySelectorAll("[data-full]")]; show(set.indexOf(b)); lb.classList.add("open");
+  });
+  lb.addEventListener("click", e => {
+    if (e.target.closest(".lb-prev")) return show(idx - 1);
+    if (e.target.closest(".lb-next")) return show(idx + 1);
+    if (e.target !== img) lb.classList.remove("open");
+  });
+  addEventListener("keydown", e => { if (!lb.classList.contains("open")) return; if (e.key === "ArrowLeft") show(idx - 1); if (e.key === "ArrowRight") show(idx + 1); });
+  lb.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener("touchend", e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1)); x0 = null; });
 }
 addEventListener("keydown", e => { if (e.key === "Escape") { modal && modal.classList.remove("open"); lb && lb.classList.remove("open"); } });
 

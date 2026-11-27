@@ -159,8 +159,11 @@ def people(items):
     return out + "</div>"
 
 def gallery(imgs):
-    return ('<div class="pgrid">' + "".join(f'<button class="ph reveal" data-full="{u}"><img src="{u}" alt="Photo {i+1}" loading="lazy"></button>' for i, u in enumerate(imgs))
-            + '</div><div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo"><button class="lb-x" aria-label="Close">×</button><img alt=""></div>')
+    return ('<div class="pgrid" data-group>' + "".join(f'<button class="ph reveal" data-full="{u}"><img src="{u}" alt="Photo {i+1}" loading="lazy"></button>' for i, u in enumerate(imgs))
+            + '</div>' + LIGHTBOX)
+
+LIGHTBOX = ('<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo"><button class="lb-x" aria-label="Close">×</button>'
+            '<button class="lb-prev" aria-label="Previous photo">‹</button><img alt=""><button class="lb-next" aria-label="Next photo">›</button><span class="lb-n"></span></div>')
 
 def locations(items):
     """items: (name, address, phones)"""
@@ -343,6 +346,12 @@ a.cs:hover{transform:translateY(-4px);box-shadow:var(--sh-3)}
 .alert-note{background:#fff7e6;border-radius:14px;padding:16px 18px;color:#7a4b00;box-shadow:inset 3px 0 0 #f0a020;font-size:15px}
 .steps3.four{grid-template-columns:repeat(4,1fr)}
 .steps3 p{color:var(--muted);font-size:15px}
+.lightbox .lb-prev,.lightbox .lb-next{display:none;position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:var(--navy);font-size:30px;line-height:1;cursor:pointer;box-shadow:var(--sh-2)}
+.lightbox.multi .lb-prev,.lightbox.multi .lb-next{display:grid;place-items:center}
+.lightbox .lb-prev{left:18px}.lightbox .lb-next{right:18px}
+.lightbox .lb-n{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;font-weight:700;font-size:14px;background:rgba(0,0,0,.45);padding:4px 12px;border-radius:999px}
+.lightbox .lb-n:empty{display:none}
+@media (max-width:640px){.lightbox .lb-prev,.lightbox .lb-next{width:42px;height:42px;font-size:24px}.lightbox .lb-prev{left:8px}.lightbox .lb-next{right:8px}}
 .steps3 p strong{color:var(--navy);font-size:16.5px}
 .subnav{background:#fff;border-bottom:1px solid #eef0f3}
 .subnav .wrap{display:flex;gap:8px;overflow-x:auto;padding-top:12px;padding-bottom:12px;scrollbar-width:none}

@@ -644,6 +644,12 @@ a.cs:hover{transform:translateY(-4px);box-shadow:var(--sh-3)}
 .alert-note{background:#fff7e6;border-radius:14px;padding:16px 18px;color:#7a4b00;box-shadow:inset 3px 0 0 #f0a020;font-size:15px}
 .steps3.four{grid-template-columns:repeat(4,1fr)}
 .steps3 p{color:var(--muted);font-size:15px}
+.lightbox .lb-prev,.lightbox .lb-next{display:none;position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:var(--navy);font-size:30px;line-height:1;cursor:pointer;box-shadow:var(--sh-2)}
+.lightbox.multi .lb-prev,.lightbox.multi .lb-next{display:grid;place-items:center}
+.lightbox .lb-prev{left:18px}.lightbox .lb-next{right:18px}
+.lightbox .lb-n{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;font-weight:700;font-size:14px;background:rgba(0,0,0,.45);padding:4px 12px;border-radius:999px}
+.lightbox .lb-n:empty{display:none}
+@media (max-width:640px){.lightbox .lb-prev,.lightbox .lb-next{width:42px;height:42px;font-size:24px}.lightbox .lb-prev{left:8px}.lightbox .lb-next{right:8px}}
 .steps3 p strong{color:var(--navy);font-size:16.5px}
 .subnav{background:#fff;border-bottom:1px solid #eef0f3}
 .subnav .wrap{display:flex;gap:8px;overflow-x:auto;padding-top:12px;padding-bottom:12px;scrollbar-width:none}
@@ -687,5 +693,37 @@ a.cs:hover{transform:translateY(-4px);box-shadow:var(--sh-3)}
 .maplink2{display:inline-flex;gap:6px;align-items:center;margin-top:10px;font-weight:700;color:var(--red);font-size:14.5px}
 .centres{grid-template-columns:repeat(3,1fr)}
 .people .person img{object-position:center top}
-@media (max-width:980px){.centres{grid-template-columns:1fr 1fr}}
+/* gallery: year albums */
+.gal-intro{text-align:center;color:var(--muted);margin-bottom:14px}
+.ychips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:34px}
+.ychips a{padding:9px 18px;border-radius:999px;background:#fff;box-shadow:var(--sh-1);font-weight:700;color:var(--navy)}
+.ychips a:hover{background:var(--red);color:#fff}
+.yr{scroll-margin-top:150px;margin-bottom:44px}
+.yhead{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;border-bottom:2px solid var(--bg);padding-bottom:8px}
+.yhead h2{font-size:32px}
+.yhead span{color:var(--muted);font-weight:600}
+.albums{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.album{background:#fff;border-radius:18px;box-shadow:var(--sh-1);overflow:hidden;transition:box-shadow .2s}
+.album:hover{box-shadow:var(--sh-3)}
+.album summary{list-style:none;cursor:pointer;display:block}
+.album summary::-webkit-details-marker{display:none}
+.album summary::after{content:none!important;display:none}
+.album .cv{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--bg)}
+.album .meta{display:block;padding:12px 14px 14px}
+.album .meta b{display:block;font-size:15.5px;color:var(--navy);line-height:1.3}
+.album .meta small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.album .meta i{display:block;font-style:normal;font-weight:700;font-size:13.5px;color:var(--red);margin-top:8px}
+.album .meta i::after{content:"View photos →"}
+.album[open]{grid-column:1/-1}
+.album[open] .cv{display:none}
+.album[open] .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px}
+.album[open] .meta small{margin:0}
+.album[open] .meta i{margin:0 0 0 auto}
+.album[open] .meta i::after{content:"Close ✕"}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;padding:0 18px 18px}
+.agrid button{border:0;padding:0;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:zoom-in;background:var(--bg)}
+.agrid img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.agrid button:hover img{transform:scale(1.05)}
+@media (max-width:980px){.centres{grid-template-columns:1fr 1fr}.albums{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:640px){.albums{grid-template-columns:1fr 1fr;gap:12px}.agrid{grid-template-columns:repeat(3,1fr);padding:0 10px 10px;gap:6px}.yhead h2{font-size:26px}.album .meta b{font-size:14.5px}}
 @media (max-width:640px){.centres{grid-template-columns:1fr}.ach article{grid-template-columns:1fr}.ach img{width:100%;max-width:245px}.hero2{height:560px}}

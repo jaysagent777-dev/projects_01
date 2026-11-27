@@ -282,11 +282,34 @@ PAGES["transport"] = ("Transport &amp; Security", inner(FAC, "transport", "Trans
     "School transport at St. John's Public School, Vijayawada — city-wide bus routes, a caretaker on every bus, campus security.")
 
 # ── GALLERY / ADMISSIONS / CONTACT ───────────────────────────────────────────
+# Year albums from the school's current gallery (gallery-data.json: year -> events -> photo URLs)
+import json as _json
+GAL = _json.loads((Path(__file__).resolve().parent / "gallery-data.json").read_text(encoding="utf-8"))
+
+def year_albums():
+    total = sum(len(e["photos"]) for y in GAL for e in y["events"])
+    chips = "".join(f'<a href="#y{y["year"][:4]}">{y["year"]}</a>' for y in GAL) + '<a href="#history">Through the years</a>'
+    out = (f'<p class="gal-intro reveal">{total:,} photos from {sum(len(y["events"]) for y in GAL)} events across our campuses. Tap an event to open its photos.</p>'
+           f'<nav class="ychips reveal" aria-label="Years">{chips}</nav>')
+    for y in GAL:
+        n = sum(len(e["photos"]) for e in y["events"])
+        cards = ""
+        for e in y["events"]:
+            ph = e["photos"]
+            sub = " · ".join(x for x in [e["campus"], f'{len(ph)} photo{"s" if len(ph) != 1 else ""}'] if x)
+            grid = "".join(f'<button data-full="{u}"><img src="{u}" alt="{esc(e["title"])}, photo {i+1}" loading="lazy"></button>' for i, u in enumerate(ph))
+            cards += (f'<details class="album reveal"><summary><img class="cv" src="{ph[0]}" alt="" loading="lazy">'
+                      f'<span class="meta"><b>{esc(e["title"])}</b><small>{sub}</small><i></i></span></summary>'
+                      f'<div class="agrid" data-group>{grid}</div></details>')
+        out += (f'<div class="yr" id="y{y["year"][:4]}"><div class="yhead"><h2>{y["year"]}</h2><span>{len(y["events"])} events · {n} photos</span></div>'
+                f'<div class="albums">{cards}</div></div>')
+    return out
+
 PAGES["gallery"] = ("Gallery", inner(None, "gallery", "Gallery", "Photo gallery",
-    "Events, celebrations and moments from St. John's since 1985.")
-    + section(head_("Through the years", "Moments from our history.") + gallery(HIST)
-              + '<p class="note" style="text-align:center;margin-top:18px">Year albums from recent events (2021–22 and earlier) can be added here, with new photos from this year.</p>'),
-    "Photo gallery of St. John's Public School, Vijayawada — events, celebrations and moments since 1985.")
+    "Events, celebrations and classroom moments, year by year.")
+    + section(year_albums())
+    + '<section class="alt" id="history"><div class="wrap">' + head_("Since 1985", "Through the years.") + gallery(HIST) + "</div></section>",
+    "Photo gallery of St. John's Public School, Vijayawada — year albums from 2013–14 to 2021–22: Teachers' Day, Children's Day, Independence Day, graduation, field trips and more.")
 
 PAGES["enquiry"] = ("Admissions", inner(None, "enquiry", "Admissions", "Admissions open",
     "Nursery to Grade X · SSC &amp; CBSE · four campuses in Vijayawada.")
@@ -340,7 +363,39 @@ S["extra_css"] = r"""
 .maplink2{display:inline-flex;gap:6px;align-items:center;margin-top:10px;font-weight:700;color:var(--red);font-size:14.5px}
 .centres{grid-template-columns:repeat(3,1fr)}
 .people .person img{object-position:center top}
-@media (max-width:980px){.centres{grid-template-columns:1fr 1fr}}
+/* gallery: year albums */
+.gal-intro{text-align:center;color:var(--muted);margin-bottom:14px}
+.ychips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:34px}
+.ychips a{padding:9px 18px;border-radius:999px;background:#fff;box-shadow:var(--sh-1);font-weight:700;color:var(--navy)}
+.ychips a:hover{background:var(--red);color:#fff}
+.yr{scroll-margin-top:150px;margin-bottom:44px}
+.yhead{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;border-bottom:2px solid var(--bg);padding-bottom:8px}
+.yhead h2{font-size:32px}
+.yhead span{color:var(--muted);font-weight:600}
+.albums{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.album{background:#fff;border-radius:18px;box-shadow:var(--sh-1);overflow:hidden;transition:box-shadow .2s}
+.album:hover{box-shadow:var(--sh-3)}
+.album summary{list-style:none;cursor:pointer;display:block}
+.album summary::-webkit-details-marker{display:none}
+.album summary::after{content:none!important;display:none}
+.album .cv{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--bg)}
+.album .meta{display:block;padding:12px 14px 14px}
+.album .meta b{display:block;font-size:15.5px;color:var(--navy);line-height:1.3}
+.album .meta small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.album .meta i{display:block;font-style:normal;font-weight:700;font-size:13.5px;color:var(--red);margin-top:8px}
+.album .meta i::after{content:"View photos →"}
+.album[open]{grid-column:1/-1}
+.album[open] .cv{display:none}
+.album[open] .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px}
+.album[open] .meta small{margin:0}
+.album[open] .meta i{margin:0 0 0 auto}
+.album[open] .meta i::after{content:"Close ✕"}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;padding:0 18px 18px}
+.agrid button{border:0;padding:0;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:zoom-in;background:var(--bg)}
+.agrid img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.agrid button:hover img{transform:scale(1.05)}
+@media (max-width:980px){.centres{grid-template-columns:1fr 1fr}.albums{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:640px){.albums{grid-template-columns:1fr 1fr;gap:12px}.agrid{grid-template-columns:repeat(3,1fr);padding:0 10px 10px;gap:6px}.yhead h2{font-size:26px}.album .meta b{font-size:14.5px}}
 @media (max-width:640px){.centres{grid-template-columns:1fr}.ach article{grid-template-columns:1fr}.ach img{width:100%;max-width:245px}.hero2{height:560px}}
 """
 
