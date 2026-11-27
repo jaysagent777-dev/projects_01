@@ -178,6 +178,16 @@ def page_hero(crumb, title, sub, img):
     return (f'<section class="phero" style="--bg:url(\'{img}\')"><div class="wrap"><div class="crumb"><a href="index.html">Home</a> / {crumb}</div>'
             f"<h1>{title}</h1><p>{sub}</p></div></section>")
 
+def subnav(items, active):
+    """Secondary menu for a group of pages. items: (key, label)"""
+    cur = ' aria-current="page"'
+    return '<nav class="subnav" aria-label="In this section"><div class="wrap">' + "".join(
+        f'<a href="{k}.html"{cur if k == active else ""}>{lab}</a>' for k, lab in items) + "</div></nav>"
+
+def steps(items):
+    """Numbered steps. items: (title, text)"""
+    return '<div class="steps3">' + "".join(f'<div class="reveal"><b>{i+1}</b><p><strong>{t}</strong><br>{x}</p></div>' for i, (t, x) in enumerate(items)) + "</div>"
+
 def enquiry_form(title, fields, button, note=""):
     """fields: list of (id, label, type, required, options) ; type in text,tel,email,date,select,textarea"""
     rows = ""
@@ -202,6 +212,7 @@ def _logo(S):
 
 def _header(S, active):
     cur = ' aria-current="page"'
+    active = S.get("tab_group", {}).get(active, active)   # sub-pages highlight their section's tab
     tabs = "".join(f'<li><a href="{k}.html"{cur if k == active else ""}>{label}</a></li>' for k, label in S["tabs"])
     tick = " <b>•</b> ".join(S["ticker"])
     return f"""<div class="preview"><b>Redesign preview</b> — prepared for {S["name"]}. Not the live website.</div>
@@ -256,7 +267,11 @@ def build(S, PAGES, out):
     (out / "Dockerfile").write_text("FROM python:3.12-slim\nWORKDIR /app\nCOPY . ./\nENV PYTHONUNBUFFERED=1\nCMD [\"python\", \"server.py\"]\n")
     (out / ".dockerignore").write_text("site.py\nPITCH.md\nREADME.md\n__pycache__\n")
     (out / "pages.txt").write_text("\n".join(PAGES) + "\n")
-    for key, (title, body) in PAGES.items():
+    import json as _json
+    ld = ("<script type=\"application/ld+json\">" + _json.dumps(S["jsonld"], ensure_ascii=False).replace("</", "<\\/") + "</script>\n") if S.get("jsonld") else ""
+    for key, page in PAGES.items():
+        title, body = page[0], page[1]
+        desc = page[2] if len(page) > 2 else S["description"]   # optional per-page description
         (out / f"{key}.html").write_text(f"""<!DOCTYPE html>
 <!-- REDESIGN PREVIEW for {S["domain"]} — private concept, not the live site. Built from website-build/_template. -->
 <html lang="en">
@@ -264,10 +279,10 @@ def build(S, PAGES, out):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} — {esc(S["name"])} (redesign preview)</title>
-<meta name="description" content="{esc(S["description"])}">
+<meta name="description" content="{esc(desc)}">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="styles.css">
-</head>
+{ld}</head>
 <body{f" class=&quot;{S.get('body_class', '')}&quot;" if S.get("body_class") else ""}>
 {_header(S, key)}
 <main id="top">
@@ -327,6 +342,13 @@ a.cs:hover{transform:translateY(-4px);box-shadow:var(--sh-3)}
 .chips2 span{background:#fff;border-radius:12px;padding:10px 16px;font-weight:600;font-size:15px;box-shadow:var(--sh-1)}
 .alert-note{background:#fff7e6;border-radius:14px;padding:16px 18px;color:#7a4b00;box-shadow:inset 3px 0 0 #f0a020;font-size:15px}
 .steps3.four{grid-template-columns:repeat(4,1fr)}
+.steps3 p{color:var(--muted);font-size:15px}
+.steps3 p strong{color:var(--navy);font-size:16.5px}
+.subnav{background:#fff;border-bottom:1px solid #eef0f3}
+.subnav .wrap{display:flex;gap:8px;overflow-x:auto;padding-top:12px;padding-bottom:12px;scrollbar-width:none}
+.subnav a{flex:0 0 auto;padding:8px 16px;border-radius:999px;font-weight:700;font-size:14.5px;color:var(--muted);background:var(--bg)}
+.subnav a:hover{color:var(--navy)}
+.subnav a[aria-current]{background:var(--red);color:#fff}
 @media (max-width:980px){.steps3.four{grid-template-columns:1fr 1fr}.icards.c3,.icards.c4{grid-template-columns:1fr 1fr}.tline{grid-template-columns:1fr 1fr;row-gap:26px}.tline::before{display:none}.people{grid-template-columns:1fr}}
 @media (max-width:640px){.steps3.four{grid-template-columns:1fr}.icards.c2,.icards.c3,.icards.c4{grid-template-columns:1fr}.tline{grid-template-columns:1fr}.people .person{grid-template-columns:1fr}}
 """

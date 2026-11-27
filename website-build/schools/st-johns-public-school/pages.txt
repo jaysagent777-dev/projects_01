@@ -3,6 +3,7 @@ about-school
 management
 history
 careers
+alumni
 academics
 achievements
 activities
@@ -10,6 +11,5 @@ facilities
 infrastructure
 transport
 gallery
-alumni
 enquiry
 contact-us
